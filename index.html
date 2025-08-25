@@ -387,25 +387,26 @@
     const filterSelect = document.getElementById('filter-select');
     const timeFilterSelect = document.getElementById('time-filter-select');
     const sortSelect = document.getElementById('sort-select');
-    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRr_9InnjgqboAHPC5XfSibJpUpqd3JT9qR-r7aIWnGgN4ezB8Ilngwot8jbH6GhPwfCQghOWYkkP-P/pub?gid=0&single=true&output=csv';
+    const sheetUrl = 'https://script.google.com/macros/s/AKfycbxBOyU1-CxIpSqHJW94imrkMctg8WrbO7w8ZnWBmlyVRz53KaNklmyPbBVIdyluI246/exec';
     const subserversContainer = document.getElementById('subservers-container');
 
     async function fetchServerTimes() {
         try {
             const response = await fetch(sheetUrl);
-            const csvText = await response.text();
-            const lines = csvText.split('\n').slice(1); // Ignora a primeira linha do cabeçalho
-            
+            const data = await response.json(); // Já é um array de objetos
+
             // Remove conteúdo anterior para evitar duplicatas
-            subserversContainer.innerHTML = ''
-            lines.forEach(line => {
-                const [name, time] = line.split(',');
-                if (name && time) {
+            subserversContainer.innerHTML = '';
+
+            data.forEach(item => {
+                const name = item.Idhas;
+                const time = item.Horario;
+                if (name && time !== undefined) {
                     const subserverDiv = document.createElement('div');
                     subserverDiv.className = 'subservidor';
                     subserverDiv.innerHTML = `
-                        <span class="subservidor-name">${name.trim()}:</span>
-                        <span class="subservidor-time">${time.trim().padStart(2, '0')}</span>
+                        <span class="subservidor-name">${name}:</span>
+                        <span class="subservidor-time">${String(time).padStart(2, '0')}</span>
                     `;
                     subserversContainer.appendChild(subserverDiv);
                 }
