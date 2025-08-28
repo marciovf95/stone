@@ -3,32 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Informações dos BOSS</title>
+    <title>Portal Priston Tale - Informações dos Bosses</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Portal completo com horários, drops e localização dos bosses do Priston Tale">
+    <meta name="theme-color" content="#4CAF50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="PT Bosses">
+    <meta name="msapplication-TileColor" content="#4CAF50">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    
+    <!-- PWA Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_valento.webp">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_babel.webp">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_kelvezu.webp">
+    <!-- <link rel="manifest" href="/manifest.json"> --> <!-- Desabilitado para desenvolvimento local -->
+    <link rel="mask-icon" href="https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_yagditha.webp" color="#4CAF50">
     <style>
+        /* CSS Variables for Theme System */
+        :root {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #90ee90;
+            --text-accent: #4CAF50;
+            --text-highlight: #FFD700;
+            --border-color: #333;
+            --border-accent: #4CAF50;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --hover-bg: #333;
+        }
+
+
+
         body {
-            font-family: sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
             margin: 0;
             padding: 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .container {
             max-width: 900px;
             margin: 0 auto;
+            position: relative;
         }
 
         h1 {
-            color: #4CAF50;
+            color: var(--text-accent);
             text-align: center;
             margin-bottom: 5px;
         }
 
         #current-time {
             text-align: center;
-            color: #90ee90;
+            color: var(--text-secondary);
             font-size: 0.9em;
             margin-bottom: 20px;
+        }
+
+        /* Theme Toggle Styles */
+        .theme-controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .profile-toggle, .favorites-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-accent);
+            color: var(--text-accent);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .profile-toggle:hover, .favorites-toggle:hover {
+            background: var(--text-accent);
+            color: var(--bg-primary);
+            transform: translateY(-1px);
         }
 
         .controls-container {
@@ -70,8 +133,8 @@
         }
 
         .server-column {
-            background-color: #1e1e1e;
-            border: 1px solid #333;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 20px;
             display: flex;
@@ -79,15 +142,239 @@
             align-items: center;
             width: 100%;
             max-width: 300px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 8px var(--shadow-color);
+            transition: all 0.3s ease;
         }
 
         .server-name {
             font-size: 1.5em;
             font-weight: bold;
-            color: #4CAF50;
+            color: var(--text-accent);
             margin-bottom: 15px;
             text-align: center;
+        }
+
+        /* Favorites System Styles */
+        .favorite-star {
+            position: absolute;
+            top: 10px;
+            right: 45px;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s ease;
+            z-index: 10;
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .favorite-star.favorited {
+            color: var(--text-highlight);
+            transform: scale(1.2);
+        }
+
+        .favorite-star:hover {
+            transform: scale(1.3);
+            color: var(--text-highlight);
+        }
+
+        .favorites-filter {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-accent);
+            color: var(--text-accent);
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .favorites-filter.active {
+            background: var(--text-accent);
+            color: var(--bg-primary);
+        }
+
+        /* Profile Panel Styles */
+        .profile-panel {
+            position: fixed;
+            top: 0;
+            left: -400px;
+            width: 350px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 2px solid var(--border-accent);
+            z-index: 1001;
+            transition: left 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .profile-panel.open {
+            left: 0;
+        }
+
+        .profile-content {
+            padding: 20px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .profile-content h3 {
+            color: var(--text-accent);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-accent);
+            padding-bottom: 10px;
+        }
+
+        .profile-stats {
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stat-item label {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .stat-item span {
+            color: var(--text-accent);
+            font-weight: bold;
+        }
+
+        .profile-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-accent);
+            color: var(--text-primary);
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .action-btn:hover {
+            background: var(--text-accent);
+            color: var(--bg-primary);
+        }
+
+        .action-btn.danger {
+            border-color: #f44336;
+            color: #f44336;
+        }
+
+        .action-btn.danger:hover {
+            background: #f44336;
+            color: white;
+        }
+
+        .close-panel {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            color: var(--text-accent);
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .close-panel:hover {
+            transform: scale(1.2);
+        }
+
+        /* PWA Install Banner Styles */
+        .pwa-install-banner {
+            background: linear-gradient(135deg, var(--text-accent), #66bb6a);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            position: relative;
+            animation: slideInDown 0.5s ease;
+        }
+
+        .pwa-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .pwa-icon {
+            font-size: 2em;
+            min-width: 50px;
+        }
+
+        .pwa-text {
+            flex: 1;
+        }
+
+        .pwa-text strong {
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .pwa-text p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        .pwa-install-btn {
+            background: white;
+            color: var(--text-accent);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .pwa-install-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .pwa-dismiss-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .pwa-dismiss-btn:hover {
+            opacity: 1;
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .subservers-container {
@@ -134,26 +421,33 @@
         }
 
         .boss-card {
-            background-color: #1e1e1e;
-            border: 1px solid #333;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 8px var(--shadow-color);
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+            flex-direction: row;
+            align-items: flex-start;
+            text-align: left;
+            gap: 20px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .boss-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px var(--shadow-color);
         }
 
         .boss-header {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
             gap: 10px;
-            margin-bottom: 15px;
-            width: 100%;
-            justify-content: center;
+            min-width: 200px;
+            flex-shrink: 0;
         }
 
         .boss-header img {
@@ -166,35 +460,51 @@
 
         .boss-header .boss-spawn-img {
             width: 100px;
-            height: auto;
-            border-radius: 0;
-            border: none;
+            border-radius: 4px;
+            border: 1px solid #4CAF50;
             margin-top: 5px;
-            transition: width 0.5s ease-in-out;
+            transition: transform 0.3s ease;
             cursor: pointer;
         }
         .boss-header .boss-spawn-img:hover {
-            width: 400px;
+            transform: scale(2.5);
+            z-index: 1000;
+            position: relative;
+            border: 2px solid #4CAF50;
         }
         
         .boss-header h2 {
             margin: 0;
             color: #e0e0e0;
+            text-align: left;
+            width: 100%;
+        }
+
+        .boss-info {
+            flex: 1;
+            text-align: left;
+        }
+
+        .boss-info p {
+            margin: 8px 0;
+            line-height: 1.5;
         }
 
         .section-title {
             color: #4CAF50;
-            font-size: 1.2em;
-            margin-top: 15px;
-            margin-bottom: 5px;
+            font-size: 1.1em;
+            margin-top: 20px;
+            margin-bottom: 8px;
             text-align: left;
             width: 100%;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
         }
 
         ul {
             list-style-type: none;
             padding: 0;
-            margin: 0;
+            margin: 0 0 10px 0;
             width: 100%;
             text-align: left;
         }
@@ -202,9 +512,15 @@
         li {
             background-color: #2a2a2a;
             border-left: 3px solid #4CAF50;
-            padding: 10px;
-            margin-bottom: 5px;
+            padding: 12px 15px;
+            margin-bottom: 6px;
             border-radius: 4px;
+            line-height: 1.4;
+            transition: background-color 0.2s ease;
+        }
+
+        li:hover {
+            background-color: #333;
         }
 
         .highlight {
@@ -239,97 +555,687 @@
             transform: scale(1.1);
         }
 
-        @media (min-width: 600px) {
-            .controls-container {
-                flex-direction: row;
-            }
+        /* Navigation Styles */
+        .nav-container {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
 
+        .nav-tabs {
+            display: flex;
+            border-bottom: 2px solid #333;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            background-color: #2a2a2a;
+            color: #e0e0e0;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border-radius: 8px 8px 0 0;
+            margin-right: 2px;
+        }
+
+        .nav-tab:last-child {
+            margin-right: 0;
+        }
+
+        .nav-tab:hover {
+            background-color: #3a3a3a;
+            color: #4CAF50;
+        }
+
+        .nav-tab.active {
+            background-color: #4CAF50;
+            color: #121212;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Event Styles */
+        .event-card {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .event-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .event-header h2 {
+            color: #4CAF50;
+            margin: 0;
+            text-align: center;
+        }
+
+        .event-header img {
+            width: 120px;
+            height: auto;
+            border-radius: 8px;
+            border: 2px solid #4CAF50;
+            transition: transform 0.3s ease, width 0.5s ease-in-out;
+            cursor: pointer;
+        }
+
+        .event-header img:hover {
+            transform: scale(1.05);
+            width: 300px;
+        }
+
+        .event-info {
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .event-answers {
+            margin-bottom: 15px;
+        }
+
+        .event-answers h3 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        .answer-item {
+            background-color: #333;
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            border-left: 3px solid #FFD700;
+        }
+
+        .event-location {
+            margin-top: 15px;
+        }
+
+        .event-location h4 {
+            color: #4CAF50;
+            margin-bottom: 8px;
+        }
+
+        .location-info {
+            background-color: #333;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 3px solid #FF6B6B;
+        }
+
+        .frequency-info {
+            background-color: #2d4a3d;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            border-left: 3px solid #4CAF50;
+            font-weight: bold;
+        }
+
+        /* Timer and Notifications Styles */
+        .timer-section {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 200px;
+            background-color: rgba(30, 30, 30, 0.3);
+            border: 2px solid rgba(76, 175, 80, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            backdrop-filter: blur(5px);
+            transform: scale(0.85);
+            opacity: 0.4;
+            transition: all 0.3s ease;
+        }
+
+        .timer-section.scrolling {
+            opacity: 0.3;
+            transform: scale(0.8);
+            pointer-events: none;
+        }
+
+        .timer-section.no-scroll-fade {
+            opacity: 0.4 !important;
+            transform: scale(0.85) !important;
+            pointer-events: auto !important;
+        }
+
+        .timer-section.no-scroll-fade.scrolling {
+            opacity: 0.4 !important;
+            transform: scale(0.85) !important;
+            pointer-events: auto !important;
+        }
+
+        .timer-section:hover {
+            opacity: 1 !important;
+            transform: scale(1) !important;
+            pointer-events: auto !important;
+            background-color: rgba(30, 30, 30, 0.95);
+            border-color: #4CAF50;
+            width: 280px;
+            padding: 15px;
+        }
+
+        .timer-section.expanded {
+            width: 280px;
+            padding: 15px;
+            opacity: 1;
+            transform: scale(1);
+            background-color: rgba(30, 30, 30, 0.95);
+            border-color: #4CAF50;
+        }
+
+        .timer-section.expanded .notification-controls {
+            display: block !important;
+        }
+
+        .timer-section .notification-controls {
+            display: none;
+        }
+
+        .timer-controls {
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .timer-toggle, .settings-toggle {
+            background: transparent;
+            border: none;
+            color: #4CAF50;
+            cursor: pointer;
+            font-size: 1em;
+            padding: 2px;
+            border-radius: 3px;
+            transition: background-color 0.3s;
+        }
+
+        .timer-toggle:hover, .settings-toggle:hover {
+            background-color: rgba(76, 175, 80, 0.2);
+        }
+
+        .timer-toggle.active {
+            color: #FFD700;
+            background-color: rgba(76, 175, 80, 0.2);
+        }
+
+        .timer-section h3 {
+            color: #4CAF50;
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        .countdown-timer {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #FFD700;
+            margin: 5px 0;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+            text-align: center;
+        }
+
+        .next-boss-info {
+            background-color: #2a2a2a;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 8px 0;
+            border-left: 3px solid #4CAF50;
+        }
+
+        .next-boss-name {
+            font-size: 1em;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 3px;
+        }
+
+        .next-boss-location {
+            color: #90ee90;
+            font-size: 0.9em;
+            margin-bottom: 3px;
+        }
+
+        .notification-controls {
+            background-color: #2a2a2a;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .notification-controls h4 {
+            color: #4CAF50;
+            margin: 0 0 8px 0;
+            font-size: 0.95em;
+        }
+
+        .sound-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            gap: 5px;
+        }
+
+        .sound-control label {
+            color: #e0e0e0;
+            font-size: 0.85em;
+            min-width: 70px;
+        }
+
+        .sound-toggle-btn {
+            padding: 4px 8px;
+            border: 1px solid #4CAF50;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.8em;
+            flex: 1;
+            text-align: center;
+        }
+
+        .sound-toggle-btn:hover {
+            background-color: #4CAF50;
+            color: #121212;
+        }
+
+        .sound-toggle-btn.active {
+            background-color: #4CAF50;
+            color: #121212;
+        }
+
+        .sound-select {
+            padding: 4px;
+            border: 1px solid #4CAF50;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            border-radius: 4px;
+            font-size: 0.8em;
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+        }
+
+        .volume-slider {
+            width: 60px;
+            height: 4px;
+            border-radius: 2px;
+            background: #333;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        .volume-display {
+            font-size: 0.75em;
+            color: #90ee90;
+            min-width: 30px;
+        }
+
+        .warning-timer {
+            color: #FF6B6B !important;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        /* Hide timer on small screens */
+        @media (max-width: 1200px) {
+            .timer-section {
+                position: relative;
+                top: auto;
+                right: auto;
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+
+        /* Adjust main content margin for large screens */
+        @media (min-width: 1201px) {
+            .container {
+                max-width: calc(100vw - 340px);
+                margin-left: auto;
+                margin-right: auto;
+                padding-right: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
             .boss-card {
-                flex-direction: row;
+                flex-direction: column;
                 align-items: flex-start;
                 text-align: left;
             }
 
             .boss-header {
-                justify-content: flex-start;
-                flex-direction: column;
+                width: 100%;
+                align-items: center;
+                text-align: center;
+                margin-bottom: 15px;
+            }
+
+            .boss-header h2 {
+                text-align: center;
             }
 
             .boss-info {
-                margin-left: 20px;
-                flex-grow: 1;
+                width: 100%;
+            }
+        }
+
+        @media (min-width: 600px) {
+            .controls-container {
+                flex-direction: row;
             }
 
             .boss-header img {
                 width: 100px;
                 height: 100px;
             }
+
+            .boss-header .boss-spawn-img {
+                width: 120px;
+            }
+
+            .boss-header .boss-spawn-img:hover {
+                transform: scale(3);
+                z-index: 1000;
+                position: relative;
+                border: 2px solid #4CAF50;
+            }
+
+            .nav-tab {
+                font-size: 1.1em;
+                padding: 18px 25px;
+            }
+
+            .event-header {
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+            }
+
+            .event-header img {
+                width: 150px;
+                margin-right: 20px;
+            }
+
+            .event-header img:hover {
+                width: 400px;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Informações dos BOSS</h1>
-    <p id="current-time"></p>
+<!-- Profile Controls -->
+<div class="theme-controls">
+    <button class="profile-toggle" onclick="toggleProfilePanel()" title="Perfil do Usuário">👤</button>
+    <button class="favorites-toggle" id="favorites-toggle" onclick="toggleFavoritesFilter()" title="Mostrar Favoritos">⭐</button>
+</div>
 
-    <div class="controls-container">
-        <div class="controls">
-            <div class="control-group">
-                <label for="filter-select">Filtro de Item:</label>
-                <select id="filter-select">
-                    <option value="all">Todos os Itens</option>
-                    <option value="Receita de Relíquias">Receita de Relíquias</option>
-                    <option value="Anel do Valento">Anel do Valento</option>
-                    <option value="Colar do Kelvezu">Colar do Kelvezu</option>
-                    <option value="Botas do Mokova">Botas do Mokova</option>
-                    <option value="Anel Shy">Anel Shy</option>
-                    <option value="Amuleto Tulla">Amuleto Tulla</option>
-                    <option value="Botas do Draxos">Botas do Draxos</option>
-                    <option value="Luvas do Greedy">Luvas do Greedy</option>
-                    <option value="Amuleto do Yagditha">Amuleto do Yagditha</option>
-                </select>
+<!-- Profile Panel -->
+<div class="profile-panel" id="profile-panel">
+    <div class="profile-content">
+        <h3>👤 Perfil do Usuário</h3>
+        <div class="profile-stats">
+            <div class="stat-item">
+                <label>Bosses Favoritos:</label>
+                <span id="favorites-count">0</span>
             </div>
-            <div class="control-group">
-                <label for="time-filter-select">Filtro por Horário:</label>
-                <select id="time-filter-select">
-                    <option value="all">Todos os Horários</option>
-                    <script>
-                        // Gera as opções de horário dinamicamente de 00 a 23
-                        for (let i = 0; i < 24; i++) {
-                            const hour = String(i).padStart(2, '0');
-                            document.write(`<option value="${i}">${hour}hXX</option>`);
-                        }
-                    </script>
-                </select>
-            </div>
-            <div class="control-group">
-                <label for="sort-select">Ordenação:</label>
-                <select id="sort-select">
-                    <option value="next-spawn">Horário de Próxima Aparição</option>
-                    <option value="Receita de Relíquias">Receita de Relíquias</option>
-                    <option value="Anel do Valento">Anel do Valento</option>
-                    <option value="Colar do Kelvezu">Colar do Kelvezu</option>
-                    <option value="Botas do Mokova">Botas do Mokova</option>
-                    <option value="Anel Shy">Anel Shy</option>
-                    <option value="Amuleto Tulla">Amuleto Tulla</option>
-                    <option value="Botas do Draxos">Botas do Draxos</option>
-                    <option value="Luvas do Greedy">Luvas do Greedy</option>
-                    <option value="Amuleto do Yagditha">Amuleto do Yagditha</option>
-                </select>
+            <div class="stat-item">
+                <label>Notificações:</label>
+                <span id="notification-status">Desabilitadas</span>
             </div>
         </div>
-        <div class="server-column">
-            <div class="server-name">IDHAS</div>
-            <div class="subservers-container" id="subservers-container">
+        <div class="profile-actions">
+            <button onclick="exportProfile()" class="action-btn">📤 Exportar Configurações</button>
+            <button onclick="importProfile()" class="action-btn">📥 Importar Configurações</button>
+            <button onclick="clearProfile()" class="action-btn danger">🗑️ Limpar Dados</button>
+        </div>
+        <button class="close-panel" onclick="toggleProfilePanel()">❌</button>
+    </div>
+</div>
+
+<div class="container">
+    <h1>Portal de Informações Priston Tale</h1>
+    <p id="current-time"></p>
+    
+    <!-- PWA Install Banner -->
+    <div class="pwa-install-banner" id="pwa-banner" style="display: none;">
+        <div class="pwa-content">
+            <div class="pwa-icon">📱</div>
+            <div class="pwa-text">
+                <strong>Instalar App</strong>
+                <p>Adicione o Portal PT à sua tela inicial para acesso rápido!</p>
+            </div>
+            <button class="pwa-install-btn" id="pwa-install-btn">Instalar</button>
+            <button class="pwa-dismiss-btn" onclick="dismissPWABanner()">✕</button>
+        </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="nav-container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('bosses')">🐉 Bosses</button>
+            <button class="nav-tab" onclick="switchTab('events')">🎯 Eventos</button>
+        </div>
+    </div>
+
+    <!-- Bosses Tab Content -->
+    <div id="bosses-content" class="tab-content active">
+        <div class="controls-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="filter-select">Filtro de Item:</label>
+                    <select id="filter-select">
+                        <option value="all">Todos os Itens</option>
+                        <option value="Receita de Relíquias">Receita de Relíquias</option>
+                        <option value="Anel do Valento">Anel do Valento</option>
+                        <option value="Colar do Kelvezu">Colar do Kelvezu</option>
+                        <option value="Botas do Mokova">Botas do Mokova</option>
+                        <option value="Anel Shy">Anel Shy</option>
+                        <option value="Amuleto Tulla">Amuleto Tulla</option>
+                        <option value="Botas do Draxos">Botas do Draxos</option>
+                        <option value="Luvas do Greedy">Luvas do Greedy</option>
+                        <option value="Amuleto do Yagditha">Amuleto do Yagditha</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="time-filter-select">Filtro por Horário:</label>
+                    <select id="time-filter-select">
+                        <option value="all">Todos os Horários</option>
+                        <script>
+                            // Gera as opções de horário dinamicamente de 00 a 23
+                            for (let i = 0; i < 24; i++) {
+                                const hour = String(i).padStart(2, '0');
+                                document.write(`<option value="${i}">${hour}hXX</option>`);
+                            }
+                        </script>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="sort-select">Ordenação:</label>
+                    <select id="sort-select">
+                        <option value="next-spawn">Horário de Próxima Aparição</option>
+                        <option value="Receita de Relíquias">Receita de Relíquias</option>
+                        <option value="Anel do Valento">Anel do Valento</option>
+                        <option value="Colar do Kelvezu">Colar do Kelvezu</option>
+                        <option value="Botas do Mokova">Botas do Mokova</option>
+                        <option value="Anel Shy">Anel Shy</option>
+                        <option value="Amuleto Tulla">Amuleto Tulla</option>
+                        <option value="Botas do Draxos">Botas do Draxos</option>
+                        <option value="Luvas do Greedy">Luvas do Greedy</option>
+                        <option value="Amuleto do Yagditha">Amuleto do Yagditha</option>
+                    </select>
+                </div>
+            </div>
+            <div class="server-column">
+                <div class="server-name">IDHAS</div>
+                <div class="subservers-container" id="subservers-container">
+                </div>
+            </div>
+        </div>
+        
+        <div id="bosses-container"></div>
+    </div>
+
+    <!-- Fixed Timer Section (only visible on large screens) -->
+    <div class="timer-section" id="timer-section">
+        <div class="timer-controls">
+            <button class="timer-toggle" id="pin-toggle" onclick="toggleScrollFade()" title="Fixar/Desfixar">📌</button>
+            <button class="settings-toggle" onclick="toggleSettings()" title="Configurações">⚙️</button>
+        </div>
+        <h3>⏰ Próximo Boss</h3>
+        <div class="next-boss-info" id="next-boss-info">
+            <div class="next-boss-name" id="next-boss-name">Carregando...</div>
+            <div class="next-boss-location" id="next-boss-location">📍 Carregando...</div>
+            <div class="countdown-timer" id="countdown-timer">--:--:--</div>
+        </div>
+        
+        <div class="notification-controls" id="notification-controls">
+            <h4>🔔 Notificações</h4>
+            <div class="sound-control">
+                <label>Som:</label>
+                <button class="sound-toggle-btn" id="sound-toggle" onclick="toggleSound()">🔇 OFF</button>
+            </div>
+            <div class="sound-control">
+                <label>Tipo:</label>
+                <select class="sound-select" id="sound-type-select" onchange="changeSoundType()">
+                    <option value="beep">🎵 Beep</option>
+                    <option value="chime">🔔 Chime</option>
+                    <option value="alert">🚨 Alert</option>
+                    <option value="bell">🔔 Bell</option>
+                    <option value="horn">📯 Horn</option>
+                    <option value="whistle">🎺 Whistle</option>
+                </select>
+            </div>
+            <div class="sound-control">
+                <label>Aviso:</label>
+                <button class="sound-toggle-btn" id="early-warning-toggle" onclick="toggleEarlyWarning()">⚠️ OFF</button>
+            </div>
+            <div class="sound-control">
+                <label>Vol:</label>
+                <div class="volume-control">
+                    <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="50" onchange="updateVolume()">
+                    <span class="volume-display" id="volume-display">50%</span>
+                </div>
             </div>
         </div>
     </div>
-    
-    <div id="bosses-container"></div>
+
+    <!-- Events Tab Content -->
+    <div id="events-content" class="tab-content">
+        <div class="event-card">
+            <div class="event-header">
+                <img src="https://ptlab.com.br/wp-content/uploads/2024/01/vale-tranquilo-i7.png" alt="Cientista Marie - Vale Tranquilo" class="event-spawn-img">
+                <div>
+                    <h2>Cientista Marie</h2>
+                    <p style="color: #90ee90; font-size: 1.1em; margin: 5px 0;">📍 Vale Tranquilo i7 (Cachoeira)</p>
+                </div>
+            </div>
+            
+            <div class="event-info">
+                <div class="event-answers">
+                    <h3>✅ Respostas (Nessa ordem):</h3>
+                    <div class="answer-item">1° - Pedra Idetas</div>
+                    <div class="answer-item">2° - Gold</div>
+                    <div class="answer-item">3° - Mago</div>
+                    <div class="answer-item">4° - Tônico Capilar</div>
+                </div>
+                
+                <div class="event-location">
+                    <h4>📋 Informações Importantes:</h4>
+                    <div class="location-info">
+                        • A recompensa irá para o seu distribuidor, abra a recompensa e você ganhará outra recompensa.
+                    </div>
+                    <div class="location-info">
+                        • Para trocar a engrenagem e a prece, vá até o quadrante D5 (Rind Violenta), na cidade de Pillai (qualquer sub-servidor).
+                    </div>
+                    <div class="frequency-info">
+                        🕐 Frequência: 1 vez ao dia
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Placeholder for future social features -->
+        <div class="event-card" style="border: 2px dashed #4CAF50; background-color: #1a2a1a;">
+            <div style="text-align: center; padding: 20px; color: #4CAF50;">
+                <h3>🚀 Área de Recursos Sociais - Em Desenvolvimento</h3>
+                <p style="color: #90ee90; margin-bottom: 15px;">Próximas funcionalidades que serão implementadas:</p>
+                <div style="text-align: left; max-width: 500px; margin: 0 auto;">
+                    <div style="background-color: #2a2a2a; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 3px solid #FFD700;">
+                        ⭐ <strong>Sistema de Favoritos:</strong> Marque seus bosses favoritos para acompanhar
+                    </div>
+                    <div style="background-color: #2a2a2a; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 3px solid #FFD700;">
+                        📤 <strong>Compartilhamento:</strong> Compartilhe horários específicos com amigos
+                    </div>
+                    <div style="background-color: #2a2a2a; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 3px solid #FFD700;">
+                        👥 <strong>Comunidade:</strong> Sistema de grupos e chat integrado
+                    </div>
+                    <div style="background-color: #2a2a2a; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 3px solid #FFD700;">
+                        📊 <strong>Estatísticas:</strong> Histórico pessoal de aparições e drops
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <a href="https://wa.me/55067996456868" class="whatsapp-float" target="_blank" aria-label="Fale no WhatsApp">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
-</a>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
+    </a>
 </div>
 
 <script>
@@ -392,7 +1298,7 @@
         },
         {
             nome: "Draxos", local: "Laboratório Secreto", horarios: [9, 19],
-            drop: ["Itens do mapa", "Essência do Draxos (2,40%)", "Receita de Relíquia (2,40%)", "Botas do Draxos (0,14% de Chance, e 0,16% no Omega)"],
+            drop: ["Itens do mapa, Essência do Draxos (2,40%), Receita de Relíquia (2,40%), Botas do Draxos (0,14% de Chance, e 0,16% no Omega)"],
             dano1: ["3x Sol (45%), 3x Meteoritos Idetas (12%), Runas Superiores (38%) ou Pergaminho de Invocação de Boss (Mokova, Shy ou Tulla) (5%)."],
             dano2: ["Pergaminho de Invocação do Draxos (10%), Runas Superiores (26%), Buff Especial (3H) (20%), Pergaminho de Invocação de Boss (Mokova, Shy ou Tulla) (15%), Itens de Ataque level 118 (17%), 33.766.200.000 pontos de Experiência (5%) ou Essências do Aging (I), (A) ou (S) (10%)."],
             dano3: ["Pergaminho de Invocação do Draxos (10%), Caixa Priston (3H) (8%), Pergaminho de Invocação de Boss (Mokova, Shy ou Tulla) (15%), Itens de Defesa level 118 (21%), Itens de Ataque level 118 (21%), Essência do Draxos (5%), 41.496.000.000 pontos de Experiência (5%) ou Essências do Aging (I), (A) ou (S) (10%)."],
@@ -409,8 +1315,8 @@
             spaw : "https://ptlab.com.br/wp-content/uploads/2024/01/arma-antiga.png"
         },
         {
-            nome: "Espectro do Midranda", local: "Estrada Sombria", horarios: [11, 19],
-            drop: ["Itens do mapa", "Receita de Relíquia"],
+            nome: "Espectro do<br>Midranda", local: "Estrada Sombria", horarios: [11, 19],
+            drop: ["Itens do mapa, Receita de Relíquia"],
             dano1: ["3x Sol (45%), 3x Meteoritos Idetas (12%), Runas Superiores (38%) ou Pergaminho de Invocação de Boss (Greedy, Tulla ou Draxos) (5%)."],
             dano2: ["Pergaminho de Invocação Espectro do Midranda (10%), Runas Superiores (26%), Buff Especial (3H) (20%), Pergaminho de Invocação de Boss (Draxos, Tulla ou Greddy) (15%), Itens de Ataque level 130 (17%), 69.959.440.000 pontos de Experiência (5%) ou Essências do Aging (I), (A) ou (S) (2%)."],
             dano3: ["Pergaminho de Invocação Espectro do Midranda (10%), Pergaminho de Invocação de Boss (Greedy, Tulla ou Draxos) (15%), Essências do Aging (I), (A) ou (S) (10%), Itens de Defesa level 130 (21%), Itens de Ataque level 130 (21%), Caixa Priston (3H) (8%), Essências do Babel, Fúria, Valento, Kelvezu, Mokova, Shy, Tulla, Draxos ou Greedy (5%), ou 84.779.847.000 pontos de Experiência (5%)."],
@@ -436,7 +1342,7 @@
             spaw : "https://ptlab.com.br/wp-content/uploads/2024/01/abismo-do-mar-congelado.png"
         },
         {
-            nome: "Midranda Ressurgido", local: "Santuário do Abismo", horarios: [19],
+            nome: "Midranda<br>Ressurgido", local: "Santuário do Abismo", horarios: [19],
             drop: ["Itens do mapa, Essência do Midranda e Receita de Relíquias (4,80% de chance), e Brinco do Midranda (Alfa, Beta, Gama e Zeta. 0,16% de chance) e (Omega 0,18% de chance)."],
             dano1: ["3x Sol (45%), 3x Meteoritos Idetas (12%), Runas Superiores (38%) ou Pergaminho de Invocação de Boss (Greedy, Espectro do Midranda ou Yagditha) (5%)."],
             dano2: ["Pergaminho de Invocação Espectro do Midranda (20%), Runas Superiores (26%), Buff Especial (3H) (15%), Pergaminho de Invocação de Boss (Yagditha ou Greddy) (15%), Itens de Ataque level 140 (17%), 150.878.802.000 pontos de Experiência (5%) ou Essências do Aging (I), (A) ou (S) (2%)."],
@@ -453,6 +1359,177 @@
     const sortSelect = document.getElementById('sort-select');
     const sheetUrl = 'https://script.google.com/macros/s/AKfycbxBOyU1-CxIpSqHJW94imrkMctg8WrbO7w8ZnWBmlyVRz53KaNklmyPbBVIdyluI246/exec';
     const subserversContainer = document.getElementById('subservers-container');
+
+    // Timer and notification elements
+    const nextBossName = document.getElementById('next-boss-name');
+    const nextBossLocation = document.getElementById('next-boss-location');
+    const countdownTimer = document.getElementById('countdown-timer');
+    
+    // Notification settings
+    let soundEnabled = false;
+    let earlyWarningEnabled = false;
+    let volume = 0.5;
+    let soundType = 'beep';
+    let lastNotifiedBoss = null;
+    let audioContext = null;
+
+    // Sound configurations
+    const soundTypes = {
+        beep: { frequencies: [800], durations: [200] },
+        chime: { frequencies: [523, 659, 784], durations: [150, 150, 300] },
+        alert: { frequencies: [1000, 800, 1000], durations: [100, 100, 200] },
+        bell: { frequencies: [400, 500, 600, 500, 400], durations: [150, 150, 150, 150, 200] },
+        horn: { frequencies: [300, 350, 400], durations: [300, 300, 400] },
+        whistle: { frequencies: [1200, 1400, 1200], durations: [100, 200, 150] }
+    };
+
+    // Initialize audio context
+    function initAudioContext() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    // Generate notification sound
+    function playNotificationSound(customType = null) {
+        if (!soundEnabled || !audioContext) return;
+        
+        const type = customType || soundType;
+        const config = soundTypes[type];
+        let time = audioContext.currentTime;
+        
+        config.frequencies.forEach((frequency, index) => {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+            
+            const duration = config.durations[index] / 1000;
+            
+            gainNode.gain.setValueAtTime(0, time);
+            gainNode.gain.linearRampToValueAtTime(volume * 0.3, time + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, time + duration - 0.01);
+            
+            oscillator.start(time);
+            oscillator.stop(time + duration);
+            
+            time += duration + 0.05; // Small gap between notes
+        });
+    }
+
+    // Notification functions
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        const btn = document.getElementById('sound-toggle');
+        
+        if (soundEnabled) {
+            initAudioContext();
+            btn.textContent = '🔊 ON';
+            btn.classList.add('active');
+            playNotificationSound(); // Test sound
+        } else {
+            btn.textContent = '🔇 OFF';
+            btn.classList.remove('active');
+        }
+    }
+
+    function toggleEarlyWarning() {
+        earlyWarningEnabled = !earlyWarningEnabled;
+        const btn = document.getElementById('early-warning-toggle');
+        
+        if (earlyWarningEnabled) {
+            btn.textContent = '⚠️ ON';
+            btn.classList.add('active');
+        } else {
+            btn.textContent = '⚠️ OFF';
+            btn.classList.remove('active');
+        }
+    }
+
+    function changeSoundType() {
+        const select = document.getElementById('sound-type-select');
+        soundType = select.value;
+        
+        // Play test sound if enabled
+        if (soundEnabled) {
+            playNotificationSound();
+        }
+    }
+
+    function updateVolume() {
+        const slider = document.getElementById('volume-slider');
+        const display = document.getElementById('volume-display');
+        volume = slider.value / 100;
+        display.textContent = slider.value + '%';
+    }
+
+    // Make functions global
+    window.toggleSound = toggleSound;
+    window.toggleEarlyWarning = toggleEarlyWarning;
+    window.changeSoundType = changeSoundType;
+    window.updateVolume = updateVolume;
+
+    // Timer scroll behavior
+    let scrollTimeout;
+    let isScrollFadeDisabled = false;
+    let isSettingsExpanded = false;
+
+    function toggleScrollFade() {
+        const timerSection = document.getElementById('timer-section');
+        const pinToggle = document.getElementById('pin-toggle');
+        
+        isScrollFadeDisabled = !isScrollFadeDisabled;
+        
+        if (isScrollFadeDisabled) {
+            timerSection.classList.add('no-scroll-fade');
+            pinToggle.classList.add('active');
+            pinToggle.title = 'Permitir transparência no scroll';
+        } else {
+            timerSection.classList.remove('no-scroll-fade');
+            pinToggle.classList.remove('active');
+            pinToggle.title = 'Fixar/Desfixar';
+        }
+    }
+
+    function toggleSettings() {
+        const timerSection = document.getElementById('timer-section');
+        
+        isSettingsExpanded = !isSettingsExpanded;
+        
+        if (isSettingsExpanded) {
+            timerSection.classList.add('expanded');
+        } else {
+            timerSection.classList.remove('expanded');
+        }
+    }
+
+    function handleScroll() {
+        const timerSection = document.getElementById('timer-section');
+        
+        if (!isScrollFadeDisabled) {
+            // Add scrolling class immediately
+            timerSection.classList.add('scrolling');
+            
+            // Clear existing timeout
+            clearTimeout(scrollTimeout);
+            
+            // Remove scrolling class after user stops scrolling
+            scrollTimeout = setTimeout(() => {
+                timerSection.classList.remove('scrolling');
+            }, 1000); // Wait 1 second after scroll stops
+        }
+    }
+
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll);
+
+    // Make functions global
+    window.toggleScrollFade = toggleScrollFade;
+    window.toggleSettings = toggleSettings;
 
     async function fetchServerTimes() {
         try {
@@ -517,6 +1594,131 @@
         }
         return sortedHorarios[0] + 24;
     }
+
+    // Find next boss to appear
+    function findNextBoss() {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        const currentTimeInMinutes = currentHour * 60 + currentMinute;
+        
+        let nextBoss = null;
+        let minTimeToNext = Infinity;
+        
+        allBossesData.forEach(boss => {
+            boss.horarios.forEach(hour => {
+                const bossTimeInMinutes = hour * 60;
+                let timeToNext;
+                
+                if (bossTimeInMinutes > currentTimeInMinutes) {
+                    timeToNext = bossTimeInMinutes - currentTimeInMinutes;
+                } else {
+                    // Next day
+                    timeToNext = (24 * 60) - currentTimeInMinutes + bossTimeInMinutes;
+                }
+                
+                if (timeToNext < minTimeToNext) {
+                    minTimeToNext = timeToNext;
+                    nextBoss = {
+                        ...boss,
+                        nextHour: hour,
+                        timeToNext: timeToNext
+                    };
+                }
+            });
+        });
+        
+        return nextBoss;
+    }
+
+    // Update countdown timer
+    function updateCountdownTimer() {
+        const nextBoss = findNextBoss();
+        
+        if (!nextBoss) {
+            countdownTimer.textContent = '--:--:--';
+            return;
+        }
+        
+        const now = new Date();
+        const timeToNext = nextBoss.timeToNext;
+        const hours = Math.floor(timeToNext / 60);
+        const minutes = timeToNext % 60;
+        const seconds = 60 - now.getSeconds();
+        
+        // Update display
+        nextBossName.innerHTML = nextBoss.nome;
+        nextBossLocation.textContent = `📍 ${nextBoss.local}`;
+        
+        const hoursDisplay = String(hours).padStart(2, '0');
+        const minutesDisplay = String(minutes).padStart(2, '0');
+        const secondsDisplay = String(seconds).padStart(2, '0');
+        
+        countdownTimer.textContent = `${hoursDisplay}:${minutesDisplay}:${secondsDisplay}`;
+        
+        // Add warning color if less than 10 minutes
+        if (timeToNext <= 10) {
+            countdownTimer.classList.add('warning-timer');
+        } else {
+            countdownTimer.classList.remove('warning-timer');
+        }
+        
+        // Notifications
+        const bossKey = `${nextBoss.nome}-${nextBoss.nextHour}`;
+        
+        // Early warning (5 minutes before)
+        if (earlyWarningEnabled && timeToNext === 5 && lastNotifiedBoss !== bossKey + '-early') {
+            playNotificationSound('chime');
+            showNotification(`⚠️ ${nextBoss.nome.replace('<br>', ' ')} aparecerá em 5 minutos!`, nextBoss.local, nextBoss.nome);
+            lastNotifiedBoss = bossKey + '-early';
+        }
+        
+        // Final warning (1 minute before)
+        if (soundEnabled && timeToNext === 1 && lastNotifiedBoss !== bossKey + '-final') {
+            playNotificationSound('alert');
+            showNotification(`🚨 ${nextBoss.nome.replace('<br>', ' ')} aparecerá em 1 minuto!`, nextBoss.local, nextBoss.nome);
+            lastNotifiedBoss = bossKey + '-final';
+        }
+        
+        // Boss spawned
+        if (timeToNext === 0 && lastNotifiedBoss !== bossKey + '-spawn') {
+            playNotificationSound('alert');
+            showNotification(`🐉 ${nextBoss.nome.replace('<br>', ' ')} apareceu agora!`, nextBoss.local, nextBoss.nome);
+            lastNotifiedBoss = bossKey + '-spawn';
+        }
+    }
+
+    // Show browser notification
+    function showNotification(title, body) {
+        if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification(title, {
+                body: body,
+                icon: 'https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_babel.webp'
+            });
+        }
+    }
+
+    // Request notification permission
+    
+    // ===== GLOBAL VARIABLES =====
+    let showOnlyFavorites = false;
+
+    // ===== USER PROFILE GLOBAL =====
+    let userProfile = {
+        favoritesBosses: [],
+        soundSettings: {
+            enabled: false,
+            type: "beep",
+            volume: 50,
+            earlyWarning: false
+        },
+        notificationsEnabled: false,
+        lastAccess: new Date().toISOString(),
+        stats: {
+            totalVisits: 0,
+            favoritesCount: 0
+        }
+    };
     
     function renderBosses() {
         const selectedFilter = filterSelect.value;
@@ -531,6 +1733,11 @@
             const dropString = boss.drop ? boss.drop.join(' ') : '';
             return dropString.includes(selectedFilter);
         });
+
+        // Passo 1.5: Filtrar apenas favoritos se ativo
+        if (showOnlyFavorites) {
+            filteredBosses = filteredBosses.filter(boss => isFavorite(boss.nome));
+        }
 
         // Passo 2: Filtrar os bosses por horário
         if (selectedTimeFilter !== 'all') {
@@ -563,6 +1770,17 @@
         sortedBosses.forEach(info => {
             const bossCard = document.createElement('div');
             bossCard.className = 'boss-card';
+            
+            // Add favorite star
+            const favoriteStar = document.createElement('div');
+            favoriteStar.className = `favorite-star ${isFavorite(info.nome) ? 'favorited' : ''}`;
+            favoriteStar.innerHTML = '⭐';
+            favoriteStar.title = isFavorite(info.nome) ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
+            favoriteStar.onclick = (e) => {
+                e.stopPropagation();
+                toggleFavorite(info.nome);
+            };
+            bossCard.appendChild(favoriteStar);
 
             const bossHeader = document.createElement('div');
             bossHeader.className = 'boss-header';
@@ -579,7 +1797,7 @@
             spawnImage.className = 'boss-spawn-img';
             
             const bossTitle = document.createElement('h2');
-            bossTitle.textContent = info.nome;
+            bossTitle.innerHTML = info.nome;
             
             bossHeader.appendChild(bossImage);            
             bossHeader.appendChild(bossTitle);
@@ -634,15 +1852,295 @@
     timeFilterSelect.addEventListener('change', renderBosses);
     sortSelect.addEventListener('change', renderBosses);
 
-    // Renderiza a lista de bosses e o horário quando a página carrega
+    // Função para trocar entre abas
+    function switchTab(tabName) {
+        // Remove active de todas as abas e conteúdos
+        document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        // Adiciona active na aba clicada
+        event.target.classList.add('active');
+        
+        // Mostra o conteúdo correspondente
+        document.getElementById(tabName + '-content').classList.add('active');
+        
+        // Se mudou para a aba de bosses, atualiza os dados
+        if (tabName === 'bosses') {
+            fetchServerTimes();
+            renderBosses();
+        }
+    }
+
+
+    // Torna a função switchTab global para ser acessível pelos botões
+    window.switchTab = switchTab;
+
+
+    // Load user profile from localStorage
+    function loadProfile() {
+        try {
+            const saved = localStorage.getItem('ptBossesProfile');
+            if (saved) {
+                userProfile = { ...userProfile, ...JSON.parse(saved) };
+                console.log('📁 Profile loaded:', userProfile);
+            }
+        } catch (error) {
+            console.error('❌ Error loading profile:', error);
+        }
+        
+        // Update profile stats display
+        updateProfileDisplay();
+        
+        // Track visit
+        userProfile.stats.totalVisits++;
+        userProfile.lastAccess = new Date().toISOString();
+        saveProfile();
+    }
+
+    // Save user profile to localStorage
+    function saveProfile() {
+        try {
+            localStorage.setItem('ptBossesProfile', JSON.stringify(userProfile));
+            updateProfileDisplay();
+        } catch (error) {
+            console.error('❌ Error saving profile:', error);
+        }
+    }
+
+    // Update profile display
+    function updateProfileDisplay() {
+        document.getElementById('favorites-count').textContent = userProfile.favoritesBosses.length;
+        document.getElementById('notification-status').textContent = userProfile.notificationsEnabled ? 'Habilitadas' : 'Desabilitadas';
+    }
+
+
+
+    // ===== FAVORITES SYSTEM =====
+    function toggleFavorite(bossName) {
+        const index = userProfile.favoritesBosses.indexOf(bossName);
+        if (index > -1) {
+            userProfile.favoritesBosses.splice(index, 1);
+        } else {
+            userProfile.favoritesBosses.push(bossName);
+        }
+        saveProfile();
+        renderBosses(); // Re-render to update stars
+    }
+
+    function isFavorite(bossName) {
+        return userProfile.favoritesBosses.includes(bossName);
+    }
+
+    function toggleFavoritesFilter() {
+        showOnlyFavorites = !showOnlyFavorites;
+        const toggle = document.getElementById('favorites-toggle');
+        
+        if (showOnlyFavorites) {
+            toggle.style.background = 'var(--text-accent)';
+            toggle.style.color = 'var(--bg-primary)';
+            toggle.title = 'Mostrar todos os bosses';
+        } else {
+            toggle.style.background = 'var(--bg-secondary)';
+            toggle.style.color = 'var(--text-accent)';
+            toggle.title = 'Mostrar favoritos';
+        }
+        
+        renderBosses();
+    }
+
+    // ===== PROFILE PANEL =====
+    function toggleProfilePanel() {
+        const panel = document.getElementById('profile-panel');
+        panel.classList.toggle('open');
+    }
+
+    function exportProfile() {
+        const dataStr = JSON.stringify(userProfile, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(dataBlob);
+        link.download = 'pt-bosses-profile.json';
+        link.click();
+        
+        console.log('📤 Profile exported successfully');
+    }
+
+    function importProfile() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        
+        input.onchange = function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const imported = JSON.parse(e.target.result);
+                        userProfile = { ...userProfile, ...imported };
+                        saveProfile();
+                        renderBosses();
+                        console.log('📥 Profile imported successfully');
+                        alert('✅ Configurações importadas com sucesso!');
+                    } catch (error) {
+                        console.error('❌ Error importing profile:', error);
+                        alert('❌ Erro ao importar configurações. Verifique o arquivo.');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        };
+        
+        input.click();
+    }
+
+    function clearProfile() {
+        if (confirm('⚠️ Tem certeza que deseja limpar todos os seus dados? Esta ação não pode ser desfeita.')) {
+            localStorage.removeItem('ptBossesProfile');
+            userProfile = {
+                favoritesBosses: [],
+                soundSettings: { enabled: false, type: 'beep', volume: 50, earlyWarning: false },
+                notificationsEnabled: false,
+                lastAccess: new Date().toISOString(),
+                stats: { totalVisits: 0, favoritesCount: 0 }
+            };
+            updateProfileDisplay();
+            renderBosses();
+            console.log('🗑️ Profile cleared');
+            alert('✅ Dados limpos com sucesso!');
+        }
+    }
+
+    // ===== PWA INSTALLATION =====
+    let deferredPrompt;
+
+    // Only show PWA install prompt when served via HTTP/HTTPS
+    if (window.location.protocol !== 'file:') {
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent Chrome 67 and earlier from automatically showing the prompt
+            e.preventDefault();
+            // Stash the event so it can be triggered later
+            deferredPrompt = e;
+            // Show the install banner
+            showPWABanner();
+        });
+    }
+
+    function showPWABanner() {
+        const banner = document.getElementById('pwa-banner');
+        banner.style.display = 'block';
+        
+        document.getElementById('pwa-install-btn').addEventListener('click', installPWA);
+    }
+
+    function installPWA() {
+        const banner = document.getElementById('pwa-banner');
+        banner.style.display = 'none';
+        
+        if (deferredPrompt) {
+            // Show the install prompt
+            deferredPrompt.prompt();
+            
+            // Wait for the user to respond to the prompt
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('📱 User accepted the PWA install prompt');
+                } else {
+                    console.log('❌ User dismissed the PWA install prompt');
+                }
+                deferredPrompt = null;
+            });
+        }
+    }
+
+    function dismissPWABanner() {
+        document.getElementById('pwa-banner').style.display = 'none';
+    }
+
+    // ===== ENHANCED NOTIFICATIONS =====
+    async function requestNotificationPermission() {
+        if ('Notification' in window) {
+            const permission = await Notification.requestPermission();
+            userProfile.notificationsEnabled = permission === 'granted';
+            saveProfile();
+            
+            if (permission === 'granted') {
+                console.log('🔔 Notifications enabled');
+                // Show test notification
+                new Notification('✅ Notificações Habilitadas!', {
+                    body: 'Você receberá alertas sobre spawns dos bosses.',
+                    icon: 'https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_babel.webp'
+                });
+            }
+        }
+    }
+
+    // Enhanced notification with favorites priority
+    function showNotification(title, body, bossName = null) {
+        if (!userProfile.notificationsEnabled) return;
+        
+        // Priority notification for favorite bosses
+        const isFavoriteBoss = bossName && isFavorite(bossName);
+        
+        if ('Notification' in window && Notification.permission === 'granted') {
+            const notification = new Notification(title, {
+                body: body,
+                icon: 'https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_babel.webp',
+                badge: 'https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_valento.webp',
+                tag: `boss-${bossName}`,
+                requireInteraction: isFavoriteBoss, // Keep favorite boss notifications until dismissed
+                vibrate: isFavoriteBoss ? [200, 100, 200] : [100, 50, 100]
+            });
+            
+            // Auto-close non-favorite notifications after 5 seconds
+            if (!isFavoriteBoss) {
+                setTimeout(() => notification.close(), 5000);
+            }
+        }
+    }
+
+    // ===== SERVICE WORKER REGISTRATION =====
+    // Only register service worker when served via HTTP/HTTPS (not file://)
+    if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then((registration) => {
+                    console.log('✅ SW registered: ', registration);
+                })
+                .catch((registrationError) => {
+                    console.log('❌ SW registration failed: ', registrationError);
+                });
+        });
+    }
+
+    // Make functions global
+    window.toggleFavorite = toggleFavorite;
+    window.toggleFavoritesFilter = toggleFavoritesFilter;
+    window.toggleProfilePanel = toggleProfilePanel;
+    window.exportProfile = exportProfile;
+    window.importProfile = importProfile;
+    window.clearProfile = clearProfile;
+    window.dismissPWABanner = dismissPWABanner;
+
+    // Initialize profile system
+    loadProfile();
+
+    // Initialize all systems
     fetchServerTimes();
     renderBosses();
     updateTimeDisplay();
+    updateCountdownTimer();
     
-    // Atualiza a cada minuto para reordenar a lista e destacar o horário
+    // Set up intervals
+    setInterval(updateCountdownTimer, 1000);
     setInterval(renderBosses, 60000);
-    // Atualiza a cada segundo para manter o horário exato
     setInterval(updateTimeDisplay, 1000);
+    
+    // Initialize notifications after DOM is ready
+    setTimeout(() => {
+        requestNotificationPermission();
+    }, 1000);
 </script>
 
 </body>
