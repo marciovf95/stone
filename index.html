@@ -611,7 +611,7 @@
         }
 
         /* Event Styles */
-        .event-card {
+        .event-card, .sort-card {
             background-color: #1e1e1e;
             border: 1px solid #333;
             border-radius: 8px;
@@ -1015,6 +1015,226 @@
                 width: 400px;
             }
         }
+        .lottery-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.lottery-form {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+}
+
+.lottery-text {
+    font-size: 2em;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.range-section {
+    margin-top: 15px;
+}
+
+.lottery-input {
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-accent);
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 10px;
+    text-align: center;
+    width: 80px;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+}
+
+.lottery-input:focus {
+    outline: none;
+    border-color: var(--text-accent);
+    background: var(--bg-primary);
+}
+
+.range-input {
+    width: 100px;
+}
+
+.options-section {
+    margin: 30px 0;
+}
+
+.options-toggle {
+    width: 100%;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    padding: 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.options-toggle:hover {
+    background: var(--hover-bg);
+    border-color: var(--text-accent);
+}
+
+.options-content {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 20px;
+    text-align: left;
+}
+
+.option-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    color: var(--text-primary);
+    cursor: pointer;
+    gap: 10px;
+}
+
+.option-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--text-accent);
+}
+
+.lottery-button {
+    width: 100%;
+    background: linear-gradient(135deg, var(--text-accent), #66bb6a);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    margin-top: 20px;
+}
+
+.lottery-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.lottery-results {
+    background: var(--bg-secondary);
+    border: 2px solid var(--text-accent);
+    border-radius: 8px;
+    padding: 30px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+.lottery-results h3 {
+    color: var(--text-accent);
+    margin: 0 0 20px 0;
+    font-size: 1.5em;
+}
+
+.results-display {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+    min-height: 60px;
+    align-items: center;
+}
+
+.result-number {
+    background: linear-gradient(135deg, var(--text-accent), #66bb6a);
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 15px;
+    border-radius: 50%;
+    min-width: 50px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeInScale 0.5s ease;
+}
+
+.results-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin: 25px 0 15px 0;
+}
+
+.results-actions button {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--text-accent);
+    border-radius: 6px;
+    color: var(--text-accent);
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.results-actions button:hover {
+    background: var(--text-accent);
+    color: white;
+}
+
+.draw-info {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    margin-top: 15px;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 768px) {
+    .lottery-text {
+        font-size: 1.5em;
+    }
+    
+    .lottery-input {
+        font-size: 1em;
+        width: 60px;
+    }
+    
+    .range-input {
+        width: 80px;
+    }
+    
+    .results-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .results-actions button {
+        width: 150px;
+    }
+}
     </style>
 </head>
 <body>
@@ -1070,6 +1290,9 @@
         <div class="nav-tabs">
             <button class="nav-tab active" onclick="switchTab('bosses')">🐉 Bosses</button>
             <button class="nav-tab" onclick="switchTab('events')">🎯 Eventos</button>
+            <button class="nav-tab" onclick="switchTab('sort')">🍀 Sorteio</button>
+            <!-- <button class="nav-tab" onclick="switchTab('agecalc')">📈 Age Calc</button>  -->
+            <button class="nav-tab" onclick="switchTab('attwill')">Atualizações Futuras</button>
         </div>
     </div>
 
@@ -1209,29 +1432,87 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Placeholder for future social features -->
-        <div class="event-card" style="border: 2px dashed #4CAF50; background-color: #1a2a1a;">
+    </div>
+
+    <!-- Road Map Tab Content -->
+    <div id="attwill-content" class="tab-content">
+        <div class="sort-card" style="border: 2px dashed #4CAF50; background-color: #1a2a1a;">
             <div style="text-align: center; padding: 20px; color: #4CAF50;">
-                <h3>🚀 Área de Recursos Sociais - Em Desenvolvimento</h3>
+                <h3>🚀 Em Desenvolvimento</h3>
                 <p style="color: #90ee90; margin-bottom: 15px;">Próximas funcionalidades que serão implementadas:</p>
                 <div style="text-align: left; max-width: 500px; margin: 0 auto;">
-                    <div style="background-color: #2a2a2a; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 3px solid #FFD700;">
-                        ⭐ <strong>Sistema de Favoritos:</strong> Marque seus bosses favoritos para acompanhar
-                    </div>
                     <div style="background-color: #2a2a2a; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 3px solid #FFD700;">
                         📤 <strong>Compartilhamento:</strong> Compartilhe horários específicos com amigos
                     </div>
                     <div style="background-color: #2a2a2a; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 3px solid #FFD700;">
-                        👥 <strong>Comunidade:</strong> Sistema de grupos e chat integrado
-                    </div>
-                    <div style="background-color: #2a2a2a; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 3px solid #FFD700;">
-                        📊 <strong>Estatísticas:</strong> Histórico pessoal de aparições e drops
+                        📤 <strong>Age Calc:</strong> é uma calculadora de "aging" que permite aos jogadores prever o resultado de aumentar os atributos de um item ("Aging") ou calcular os atributos originais de um item com "aging" para verificar se é "perfeito". Essas ferramentas são úteis para simular os efeitos do processo de "Aging" em armas e armaduras, levando em conta os diferentes status como defesa, ataque, crítico, e bloqueio, com a possibilidade de incluir a função "Despertado".  
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Sort Tab Content -->
+    <div id="sort-content" class="tab-content">
+        <div class="sort-card">
+            <div class="sort-info">
+                <div class="sort-card">
+                    <div class="lottery-container">
+                        <form class="lottery-form" id="lottery-form">
+                            <div class="lottery-text">
+                                Sortear 
+                                <input type="number" id="quantity" min="1" max="100" value="1" class="lottery-input">
+                                número
+                                <div class="range-section">
+                                    entre 
+                                    <input type="number" id="min-range" min="0" max="999999" value="1" class="lottery-input range-input">
+                                    e 
+                                    <input type="number" id="max-range" min="1" max="999999" value="100" class="lottery-input range-input">
+                                </div>
+                            </div>
+
+                            <div class="options-section">
+                                <button type="button" class="options-toggle" onclick="toggleLotteryOptions()">
+                                    <span>Opções do Sorteio</span>
+                                    <span class="arrow">▼</span>
+                                </button>
+                                
+                                <div class="options-content" id="lottery-options" style="display: none;">
+                                    <label class="option-item">
+                                        <input type="checkbox" id="allow-repeats" checked>
+                                        Permitir números repetidos
+                                    </label>
+                                    <label class="option-item">
+                                        <input type="checkbox" id="sort-results">
+                                        Ordenar resultados
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="lottery-button">
+                                SORTEAR AGORA!
+                            </button>
+                        </form>
+
+                        <div class="lottery-results" id="lottery-results" style="display: none;">
+                            <h3>Resultado do Sorteio</h3>
+                            <div class="results-display" id="results-display"></div>
+                            <div class="results-actions">
+                                <button type="button" onclick="copyResults()">Copiar</button>
+                                <button type="button" onclick="newDraw()">Novo Sorteio</button>
+                            </div>
+                            <div class="draw-info">
+                                <small>Sorteado em: <span id="draw-time"></span></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Placeholder for future social features -->
+        
+    </div>    
 
     <a href="https://wa.me/55067996456868" class="whatsapp-float" target="_blank" aria-label="Fale no WhatsApp">
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
@@ -2099,6 +2380,143 @@
             }
         }
     }
+
+
+
+    let currentResults = [];
+
+function toggleLotteryOptions() {
+    const options = document.getElementById('lottery-options');
+    const arrow = document.querySelector('.options-toggle .arrow');
+    
+    if (options.style.display === 'none') {
+        options.style.display = 'block';
+        arrow.textContent = '▲';
+    } else {
+        options.style.display = 'none';
+        arrow.textContent = '▼';
+    }
+}
+
+function generateNumbers(count, min, max, allowRepeats) {
+    const numbers = [];
+    const range = max - min + 1;
+    
+    if (!allowRepeats && count > range) {
+        throw new Error(`Não é possível sortear ${count} números únicos entre ${min} e ${max}`);
+    }
+    
+    if (allowRepeats) {
+        for (let i = 0; i < count; i++) {
+            numbers.push(Math.floor(Math.random() * range) + min);
+        }
+    } else {
+        const available = Array.from({length: range}, (_, i) => min + i);
+        for (let i = 0; i < count; i++) {
+            const randomIndex = Math.floor(Math.random() * available.length);
+            numbers.push(available.splice(randomIndex, 1)[0]);
+        }
+    }
+    
+    return numbers;
+}
+
+function displayResults(numbers) {
+    const resultsDiv = document.getElementById('lottery-results');
+    const display = document.getElementById('results-display');
+    const timeSpan = document.getElementById('draw-time');
+    
+    const sortResults = document.getElementById('sort-results').checked;
+    const finalNumbers = sortResults ? [...numbers].sort((a, b) => a - b) : numbers;
+    
+    display.innerHTML = '';
+    
+    finalNumbers.forEach((number, index) => {
+        setTimeout(() => {
+            const numberDiv = document.createElement('div');
+            numberDiv.className = 'result-number';
+            numberDiv.textContent = number;
+            display.appendChild(numberDiv);
+        }, index * 100);
+    });
+    
+    timeSpan.textContent = new Date().toLocaleString('pt-BR');
+    resultsDiv.style.display = 'block';
+    currentResults = finalNumbers;
+    
+    // Scroll to results
+    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function copyResults() {
+    if (currentResults.length === 0) return;
+    
+    const text = `Números sorteados: ${currentResults.join(', ')}\nData: ${new Date().toLocaleString('pt-BR')}`;
+    
+    navigator.clipboard.writeText(text).then(() => {
+        // Simple feedback
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = 'Copiado!';
+        btn.style.background = 'var(--text-accent)';
+        btn.style.color = 'white';
+        
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = '';
+            btn.style.color = '';
+        }, 2000);
+    }).catch(() => {
+        alert('Erro ao copiar. Use Ctrl+C manualmente.');
+    });
+}
+
+function newDraw() {
+    document.getElementById('lottery-results').style.display = 'none';
+    currentResults = [];
+    
+    // Reset form
+    document.getElementById('quantity').value = 1;
+    document.getElementById('min-range').value = 1;
+    document.getElementById('max-range').value = 100;
+}
+
+// Form submission
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('lottery-form');
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const quantity = parseInt(document.getElementById('quantity').value);
+        const minRange = parseInt(document.getElementById('min-range').value);
+        const maxRange = parseInt(document.getElementById('max-range').value);
+        const allowRepeats = document.getElementById('allow-repeats').checked;
+        
+        // Validation
+        if (quantity < 1 || quantity > 100) {
+            alert('Quantidade deve ser entre 1 e 100');
+            return;
+        }
+        
+        if (minRange >= maxRange) {
+            alert('O valor mínimo deve ser menor que o máximo');
+            return;
+        }
+        
+        try {
+            const results = generateNumbers(quantity, minRange, maxRange, allowRepeats);
+            displayResults(results);
+        } catch (error) {
+            alert(error.message);
+        }
+    });
+});
+
+// Make functions global
+window.toggleLotteryOptions = toggleLotteryOptions;
+window.copyResults = copyResults;
+window.newDraw = newDraw;
 
     // ===== SERVICE WORKER REGISTRATION =====
     // Only register service worker when served via HTTP/HTTPS (not file://)
