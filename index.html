@@ -1214,29 +1214,192 @@
     }
 }
 
-@media (max-width: 768px) {
-    .lottery-text {
-        font-size: 1.5em;
-    }
-    
-    .lottery-input {
-        font-size: 1em;
-        width: 60px;
-    }
-    
-    .range-input {
-        width: 80px;
-    }
-    
-    .results-actions {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .results-actions button {
-        width: 150px;
-    }
-}
+        @media (max-width: 768px) {
+            .lottery-text {
+                font-size: 1.5em;
+            }
+            
+            .lottery-input {
+                font-size: 1em;
+                width: 60px;
+            }
+            
+            .range-input {
+                width: 80px;
+            }
+            
+            .results-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .results-actions button {
+                width: 150px;
+            }
+        }
+
+        /* Help Modal Styles */
+        .help-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .help-modal-overlay.show {
+            display: flex;
+        }
+
+        .help-modal {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-accent);
+            border-radius: 12px;
+            padding: 25px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+            margin: 20px;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .help-modal h3 {
+            color: var(--text-accent);
+            text-align: center;
+            margin: 0 0 20px 0;
+            font-size: 1.5em;
+            border-bottom: 2px solid var(--border-accent);
+            padding-bottom: 10px;
+        }
+
+        .help-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            color: var(--text-accent);
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .help-close:hover {
+            transform: scale(1.2);
+        }
+
+        .help-section {
+            background: var(--bg-tertiary);
+            border-left: 4px solid var(--text-accent);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+        }
+
+        .help-section h4 {
+            color: var(--text-accent);
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .help-section p {
+            color: var(--text-primary);
+            margin: 5px 0;
+            line-height: 1.5;
+        }
+
+        .help-example {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        .help-timeline {
+            background: var(--bg-primary);
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .help-timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+            padding: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        .help-timeline-icon {
+            font-size: 1.2em;
+            min-width: 25px;
+        }
+
+                 .help-tip {
+             background: linear-gradient(135deg, #ff9800, #ff5722);
+             color: white;
+             padding: 12px;
+             border-radius: 6px;
+             margin: 15px 0;
+             font-weight: bold;
+             text-align: center;
+         }
+
+         /* Help Modal Mobile Responsiveness */
+         @media (max-width: 768px) {
+             .help-modal {
+                 max-width: 95%;
+                 margin: 10px;
+                 padding: 20px;
+                 max-height: 90vh;
+             }
+             
+             .help-modal h3 {
+                 font-size: 1.3em;
+             }
+             
+             .help-section h4 {
+                 font-size: 1.1em;
+             }
+             
+             .help-timeline-item {
+                 flex-direction: column;
+                 align-items: flex-start;
+                 text-align: left;
+             }
+             
+             .help-timeline-icon {
+                 align-self: center;
+                 margin-bottom: 5px;
+             }
+         }
     </style>
 </head>
 <body>
@@ -1262,6 +1425,7 @@
             </div>
         </div>
         <div class="profile-actions">
+            <button onclick="testNotification()" class="action-btn">🔔 Testar Notificação</button>
             <button onclick="exportProfile()" class="action-btn">📤 Exportar Configurações</button>
             <button onclick="importProfile()" class="action-btn">📥 Importar Configurações</button>
             <button onclick="clearProfile()" class="action-btn danger">🗑️ Limpar Dados</button>
@@ -1361,6 +1525,7 @@
         <div class="timer-controls">
             <button class="timer-toggle" id="pin-toggle" onclick="toggleScrollFade()" title="Fixar/Desfixar">📌</button>
             <button class="settings-toggle" onclick="toggleSettings()" title="Configurações">⚙️</button>
+            <button class="settings-toggle" onclick="showHelpModal()" title="Ajuda - O que cada controle faz">❓</button>
         </div>
         <h3>⏰ Próximo Boss</h3>
         <div class="next-boss-info" id="next-boss-info">
@@ -1396,6 +1561,10 @@
                     <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="50" onchange="updateVolume()">
                     <span class="volume-display" id="volume-display">50%</span>
                 </div>
+            </div>
+            <div class="sound-control">
+                <label>Notif:</label>
+                <button class="sound-toggle-btn" id="notification-toggle" onclick="toggleNotifications()">🔔 OFF</button>
             </div>
         </div>
     </div>
@@ -1519,6 +1688,86 @@
     <a href="https://wa.me/55067996456868" class="whatsapp-float" target="_blank" aria-label="Fale no WhatsApp">
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
     </a>
+</div>
+
+<!-- Help Modal -->
+<div class="help-modal-overlay" id="help-modal-overlay" onclick="closeHelpModal()">
+    <div class="help-modal" onclick="event.stopPropagation()">
+        <button class="help-close" onclick="closeHelpModal()">✕</button>
+        <h3>❓ Guia dos Controles de Notificação</h3>
+        
+        <div class="help-section">
+            <h4>🔊 Som</h4>
+            <p><strong>O que faz:</strong> Toca um áudio no navegador quando o boss está chegando</p>
+            <p><strong>Quando toca:</strong> 1 minuto antes e quando o boss nasce</p>
+            <p><strong>Requisito:</strong> Você precisa estar com a aba aberta para ouvir</p>
+        </div>
+
+        <div class="help-section">
+            <h4>⚠️ Aviso</h4>
+            <p><strong>O que faz:</strong> Ativa um alerta antecipado de 5 minutos</p>
+            <p><strong>Quando dispara:</strong> 5 minutos antes do boss aparecer</p>
+            <p><strong>Som especial:</strong> Toca um som tipo "chime" (diferente do som normal)</p>
+            <p><strong>Combinado com:</strong> Também envia notificação visual (se habilitada)</p>
+        </div>
+
+        <div class="help-section">
+            <h4>🔔 Notif</h4>
+            <p><strong>O que faz:</strong> Mostra notificação visual do sistema operacional</p>
+            <p><strong>Funciona:</strong> Mesmo quando você está em outra aba ou aplicativo</p>
+            <p><strong>Aparece:</strong> Na área de notificações do Windows/Mac/Linux</p>
+            <p><strong>Persistência:</strong> Bosses favoritos ficam até você fechar, outros somem em 5s</p>
+        </div>
+
+        <div class="help-section">
+            <h4>🎵 Tipo</h4>
+            <p><strong>O que faz:</strong> Escolhe o estilo de som que será tocado</p>
+            <p><strong>Opções:</strong> Beep, Chime, Alert, Bell, Horn, Whistle</p>
+        </div>
+
+        <div class="help-section">
+            <h4>🔊 Vol</h4>
+            <p><strong>O que faz:</strong> Controla o volume do som (0% a 100%)</p>
+        </div>
+
+        <div class="help-timeline">
+            <h4 style="color: var(--text-accent); text-align: center; margin-bottom: 15px;">📅 Timeline de Notificações</h4>
+            
+            <div class="help-timeline-item">
+                <span class="help-timeline-icon">⚠️</span>
+                <div>
+                    <strong>5 minutos antes</strong> (SE "Aviso" = ON)<br>
+                    🔊 Som: Chime + 🔔 Notificação visual
+                </div>
+            </div>
+            
+            <div class="help-timeline-item">
+                <span class="help-timeline-icon">🚨</span>
+                <div>
+                    <strong>1 minuto antes</strong> (SE "Som" = ON)<br>
+                    🔊 Som: Alert + 🔔 Notificação visual
+                </div>
+            </div>
+            
+            <div class="help-timeline-item">
+                <span class="help-timeline-icon">🐉</span>
+                <div>
+                    <strong>Boss nasce</strong> (SE "Som" = ON)<br>
+                    🔊 Som: Alert + 🔔 Notificação visual
+                </div>
+            </div>
+        </div>
+
+        <div class="help-tip">
+            💡 <strong>Dica:</strong> Para receber notificações mesmo fora da aba, ative "🔔 Notif" e permita notificações no navegador!
+        </div>
+
+        <div class="help-example">
+            <strong>Configuração recomendada:</strong><br>
+            🔊 Som: ON | ⚠️ Aviso: ON | 🔔 Notif: ON<br>
+            = Máximo de alertas para não perder nenhum boss!
+        </div>
+    </div>
 </div>
 
 <script>
@@ -1791,11 +2040,30 @@
         display.textContent = slider.value + '%';
     }
 
+    // Toggle notifications
+    async function toggleNotifications() {
+        if (userProfile.notificationsEnabled) {
+            userProfile.notificationsEnabled = false;
+            const btn = document.getElementById('notification-toggle');
+            btn.textContent = '🔔 OFF';
+            btn.classList.remove('active');
+            saveProfile();
+        } else {
+            await requestNotificationPermission();
+            const btn = document.getElementById('notification-toggle');
+            if (userProfile.notificationsEnabled) {
+                btn.textContent = '🔔 ON';
+                btn.classList.add('active');
+            }
+        }
+    }
+
     // Make functions global
     window.toggleSound = toggleSound;
     window.toggleEarlyWarning = toggleEarlyWarning;
     window.changeSoundType = changeSoundType;
     window.updateVolume = updateVolume;
+    window.toggleNotifications = toggleNotifications;
 
     // Timer scroll behavior
     let scrollTimeout;
@@ -2086,16 +2354,6 @@
         }
     }
 
-    // Show browser notification
-    function showNotification(title, body) {
-        if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification(title, {
-                body: body,
-                icon: 'img/bosses/miniaturas/mini_babel.webp'
-            });
-        }
-    }
-
     // Request notification permission
     
     // ===== GLOBAL VARIABLES =====
@@ -2309,6 +2567,18 @@
     function updateProfileDisplay() {
         document.getElementById('favorites-count').textContent = userProfile.favoritesBosses.length;
         document.getElementById('notification-status').textContent = userProfile.notificationsEnabled ? 'Habilitadas' : 'Desabilitadas';
+        
+        // Update notification button state
+        const notificationBtn = document.getElementById('notification-toggle');
+        if (notificationBtn) {
+            if (userProfile.notificationsEnabled) {
+                notificationBtn.textContent = '🔔 ON';
+                notificationBtn.classList.add('active');
+            } else {
+                notificationBtn.textContent = '🔔 OFF';
+                notificationBtn.classList.remove('active');
+            }
+        }
     }
 
 
@@ -2410,6 +2680,47 @@
         }
     }
 
+    // Test notification function
+    function testNotification() {
+        if (!userProfile.notificationsEnabled) {
+            alert('❌ Primeiro ative as notificações usando o botão "🔔 OFF" no timer!');
+            return;
+        }
+        
+        showNotification(
+            '🧪 Teste de Notificação!', 
+            'Se você viu esta notificação, está funcionando perfeitamente!',
+            'Teste'
+        );
+        
+        // Also play sound if enabled
+        if (soundEnabled) {
+            playNotificationSound('chime');
+        }
+    }
+
+    // Help modal functions
+    function showHelpModal() {
+        const modal = document.getElementById('help-modal-overlay');
+        modal.classList.add('show');
+        // Prevent body scroll when modal is open
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeHelpModal() {
+        const modal = document.getElementById('help-modal-overlay');
+        modal.classList.remove('show');
+        // Restore body scroll
+        document.body.style.overflow = 'auto';
+    }
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeHelpModal();
+        }
+    });
+
     // ===== PWA INSTALLATION =====
     let deferredPrompt;
 
@@ -2459,7 +2770,10 @@
     // ===== ENHANCED NOTIFICATIONS =====
     async function requestNotificationPermission() {
         if ('Notification' in window) {
+            console.log('🔔 Solicitando permissão de notificação...');
             const permission = await Notification.requestPermission();
+            console.log('📋 Permissão obtida:', permission);
+            
             userProfile.notificationsEnabled = permission === 'granted';
             saveProfile();
             
@@ -2470,18 +2784,38 @@
                     body: 'Você receberá alertas sobre spawns dos bosses.',
                     icon: 'img/bosses/miniaturas/mini_babel.webp'
                 });
+            } else if (permission === 'denied') {
+                console.log('❌ Usuário negou permissão para notificações');
+                alert('❌ Você negou as notificações. Para ativar, clique no ícone de cadeado na barra de endereços e permita notificações.');
+            } else {
+                console.log('⏸️ Usuário dispensou a solicitação de notificação');
             }
+        } else {
+            console.log('❌ Navegador não suporta notificações');
+            alert('❌ Seu navegador não suporta notificações.');
         }
     }
 
     // Enhanced notification with favorites priority
     function showNotification(title, body, bossName = null) {
-        if (!userProfile.notificationsEnabled) return;
+        console.log('🔔 showNotification called:', {
+            title,
+            body,
+            bossName,
+            notificationsEnabled: userProfile.notificationsEnabled,
+            permission: Notification.permission
+        });
+        
+        if (!userProfile.notificationsEnabled) {
+            console.log('❌ Notificações desabilitadas no perfil do usuário');
+            return;
+        }
         
         // Priority notification for favorite bosses
         const isFavoriteBoss = bossName && isFavorite(bossName);
         
         if ('Notification' in window && Notification.permission === 'granted') {
+            console.log('✅ Criando notificação do navegador...');
             const notification = new Notification(title, {
                 body: body,
                 icon: 'img/bosses/miniaturas/mini_babel.webp',
@@ -2495,6 +2829,8 @@
             if (!isFavoriteBoss) {
                 setTimeout(() => notification.close(), 5000);
             }
+        } else {
+            console.log('❌ Notificações não permitidas pelo navegador:', Notification.permission);
         }
     }
 
@@ -2656,6 +2992,9 @@ window.newDraw = newDraw;
     window.exportProfile = exportProfile;
     window.importProfile = importProfile;
     window.clearProfile = clearProfile;
+    window.testNotification = testNotification;
+    window.showHelpModal = showHelpModal;
+    window.closeHelpModal = closeHelpModal;
     window.dismissPWABanner = dismissPWABanner;
 
     // Initialize profile system
