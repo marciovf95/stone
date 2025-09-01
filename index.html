@@ -1650,6 +1650,12 @@
     const sortSelect = document.getElementById('sort-select');
     const sheetUrl = 'https://script.google.com/macros/s/AKfycbxBOyU1-CxIpSqHJW94imrkMctg8WrbO7w8ZnWBmlyVRz53KaNklmyPbBVIdyluI246/exec';
     const subserversContainer = document.getElementById('subservers-container');
+    
+    // Variável global para armazenar os dados dos subservidores
+    let serverTimesData = [];
+    let serverDataLoaded = false; // Flag para controlar se os dados já foram carregados
+
+
 
     // Timer and notification elements
     const nextBossName = document.getElementById('next-boss-name');
@@ -1851,8 +1857,25 @@
 
     async function fetchServerTimes() {
         try {
+            // console.log('🔄 Iniciando carregamento dos dados dos subservidores...');
+            // console.log('🌐 URL:', sheetUrl);
+            
+            // Marca que está carregando
+            serverDataLoaded = false;
+            
             const response = await fetch(sheetUrl);
+            // console.log('📡 Response status:', response.status, response.statusText);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const data = await response.json(); // Já é um array de objetos
+            // console.log('📊 Dados recebidos:', data);
+
+            // Armazena os dados dos subservidores na variável global
+            serverTimesData = data;
+            // console.log('💾 Dados armazenados em serverTimesData:', serverTimesData);
 
             // Remove conteúdo anterior para evitar duplicatas
             subserversContainer.innerHTML = '';
@@ -1860,6 +1883,9 @@
             data.forEach(item => {
                 const name = item.Idhas;
                 const time = item.Horario;
+                // console.log(`📝 Processando: ${name} = ${time}`);
+                // console.log(`📝 Tipo do nome: ${typeof name}, Valor exato: "${name}"`);
+                
                 if (name && time !== undefined) {
                     const subserverDiv = document.createElement('div');
                     subserverDiv.className = 'subservidor';
@@ -1870,9 +1896,56 @@
                     subserversContainer.appendChild(subserverDiv);
                 }
             });
+            
+            // console.log('✅ Dados dos subservidores carregados com sucesso');
+            
+            // Marca que os dados foram carregados com sucesso
+            serverDataLoaded = true;
+            
+            // Atualiza o countdown timer com os novos dados
+            updateCountdownTimer();
+            
         } catch (error) {
-            console.error('Erro ao carregar os dados da planilha:', error);
-            subserversContainer.innerHTML = '<p style="color: red;">Erro ao carregar os horários. Tente novamente mais tarde.</p>';
+            console.error('❌ Erro ao carregar os dados da planilha:', error);
+            console.error('🔧 Detalhes do erro:', error.message, error.stack);
+            
+            subserversContainer.innerHTML = '<p style="color: red;">Erro ao carregar os horários. Usando dados de teste...</p>';
+            
+            // Em caso de erro, usar dados mock para teste
+            console.log('🧪 Usando dados de teste...');
+            serverTimesData = [
+                { Idhas: 'ALFA', Horario: '01' },
+                { Idhas: 'BETA', Horario: '01' },
+                { Idhas: 'GAMA', Horario: '01' },
+                { Idhas: 'DELTA', Horario: '01' },
+                { Idhas: 'EPSILON', Horario: '01' },
+                { Idhas: 'ZETA', Horario: '01' },
+                { Idhas: 'ETA', Horario: '01' },
+                { Idhas: 'THETA', Horario: '01' },
+                { Idhas: 'IOTA', Horario: '01' },
+                { Idhas: 'KAPPA', Horario: '01' },
+                { Idhas: 'LAMBDA', Horario: '01' },
+                { Idhas: 'MI', Horario: '01' },
+                { Idhas: 'NU', Horario: '01' },
+                { Idhas: 'XI', Horario: '01' }
+            ];
+            
+            // Reconstrói a interface com dados de teste
+            subserversContainer.innerHTML = '';
+            serverTimesData.forEach(item => {
+                const subserverDiv = document.createElement('div');
+                subserverDiv.className = 'subservidor';
+                subserverDiv.innerHTML = `
+                    <span class="subservidor-name">${item.Idhas}:</span>
+                    <span class="subservidor-time">${String(item.Horario).padStart(2, '0')} <small>(teste)</small></span>
+                `;
+                subserversContainer.appendChild(subserverDiv);
+            });
+            
+            // Marca que os dados de teste foram carregados
+            serverDataLoaded = true;
+            
+            updateCountdownTimer();
         }
     }
 
@@ -1931,48 +2004,27 @@
         return sortedHorarios[0] + 24;
     }
 
-    // Find next boss to appear
-    function findNextBoss() {
-        const now = getSaoPauloDate();
-        const currentHour = now.getHours();
-        const currentMinute = now.getMinutes();
-        const currentTimeInMinutes = currentHour * 60 + currentMinute;
-        
-        let nextBoss = null;
-        let minTimeToNext = Infinity;
-        
-        allBossesData.forEach(boss => {
-            boss.horarios.forEach(hour => {
-                const bossTimeInMinutes = hour * 60;
-                let timeToNext;
-                
-                if (bossTimeInMinutes > currentTimeInMinutes) {
-                    timeToNext = bossTimeInMinutes - currentTimeInMinutes;
-                } else {
-                    // Next day
-                    timeToNext = (24 * 60) - currentTimeInMinutes + bossTimeInMinutes;
-                }
-                
-                if (timeToNext < minTimeToNext) {
-                    minTimeToNext = timeToNext;
-                    nextBoss = {
-                        ...boss,
-                        nextHour: hour,
-                        timeToNext: timeToNext
-                    };
-                }
-            });
-        });
-        
-        return nextBoss;
-    }
-
     // Update countdown timer
     function updateCountdownTimer() {
-        const nextBoss = findNextBoss();
+        // Se os dados ainda não foram carregados, mostra estado de loading
+        if (!serverDataLoaded) {
+            countdownTimer.textContent = '⏳ Carregando...';
+            nextBossName.textContent = 'Aguardando dados...';
+            nextBossLocation.textContent = '📡 Conectando com servidor...';
+            return;
+        }
+        
+        const nextBoss = findNextBossWithServerTimes();
         
         if (!nextBoss) {
             countdownTimer.textContent = '--:--:--';
+            if (!serverTimesData || serverTimesData.length === 0) {
+                nextBossName.textContent = 'Carregando dados...';
+                nextBossLocation.textContent = '📡 Aguardando horários de referência...';
+            } else {
+                nextBossName.textContent = 'Nenhum boss encontrado';
+                nextBossLocation.textContent = '📍 Verifique os dados...';
+            }
             return;
         }
         
@@ -1982,9 +2034,13 @@
         const minutes = timeToNext % 60;
         const seconds = 60 - now.getSeconds();
         
-        // Update display
-        nextBossName.innerHTML = nextBoss.nome;
-        nextBossLocation.textContent = `📍 ${nextBoss.local}`;
+        // Update display with server reference info
+        const bossDisplayName = nextBoss.nome.replace('<br>', ' ');
+        const serverInfo = nextBoss.subserver ? ` (${nextBoss.subserver})` : '';
+        const spawnTimeInfo = nextBoss.spawnTime ? ` às ${nextBoss.spawnTime}` : '';
+        
+        nextBossName.innerHTML = `${bossDisplayName}${serverInfo}`;
+        nextBossLocation.textContent = `📍 ${nextBoss.local}${spawnTimeInfo}`;
         
         const hoursDisplay = String(hours).padStart(2, '0');
         const minutesDisplay = String(minutes).padStart(2, '0');
@@ -2000,26 +2056,32 @@
         }
         
         // Notifications
-        const bossKey = `${nextBoss.nome}-${nextBoss.nextHour}`;
+        const bossKey = `${nextBoss.nome}-${nextBoss.nextHour}-${nextBoss.nextMinute || 0}`;
         
         // Early warning (5 minutes before)
         if (earlyWarningEnabled && timeToNext === 5 && lastNotifiedBoss !== bossKey + '-early') {
             playNotificationSound('chime');
-            showNotification(`⚠️ ${nextBoss.nome.replace('<br>', ' ')} aparecerá em 5 minutos!`, nextBoss.local, nextBoss.nome);
+            const notificationTitle = `⚠️ ${bossDisplayName} aparecerá em 5 minutos!`;
+            const notificationBody = `${nextBoss.local}${spawnTimeInfo}${serverInfo}`;
+            showNotification(notificationTitle, notificationBody, nextBoss.nome);
             lastNotifiedBoss = bossKey + '-early';
         }
         
         // Final warning (1 minute before)
         if (soundEnabled && timeToNext === 1 && lastNotifiedBoss !== bossKey + '-final') {
             playNotificationSound('alert');
-            showNotification(`🚨 ${nextBoss.nome.replace('<br>', ' ')} aparecerá em 1 minuto!`, nextBoss.local, nextBoss.nome);
+            const notificationTitle = `🚨 ${bossDisplayName} aparecerá em 1 minuto!`;
+            const notificationBody = `${nextBoss.local}${spawnTimeInfo}${serverInfo}`;
+            showNotification(notificationTitle, notificationBody, nextBoss.nome);
             lastNotifiedBoss = bossKey + '-final';
         }
         
         // Boss spawned
         if (timeToNext === 0 && lastNotifiedBoss !== bossKey + '-spawn') {
             playNotificationSound('alert');
-            showNotification(`🐉 ${nextBoss.nome.replace('<br>', ' ')} apareceu agora!`, nextBoss.local, nextBoss.nome);
+            const notificationTitle = `🐉 ${bossDisplayName} apareceu agora!`;
+            const notificationBody = `${nextBoss.local}${spawnTimeInfo}${serverInfo}`;
+            showNotification(notificationTitle, notificationBody, nextBoss.nome);
             lastNotifiedBoss = bossKey + '-spawn';
         }
     }
@@ -2317,7 +2379,7 @@
                         userProfile = { ...userProfile, ...imported };
                         saveProfile();
                         renderBosses();
-                        console.log('📥 Profile imported successfully');
+                        // console.log('📥 Profile imported successfully');
                         alert('✅ Configurações importadas com sucesso!');
                     } catch (error) {
                         console.error('❌ Error importing profile:', error);
@@ -2343,7 +2405,7 @@
             };
             updateProfileDisplay();
             renderBosses();
-            console.log('🗑️ Profile cleared');
+            // console.log('🗑️ Profile cleared');
             alert('✅ Dados limpos com sucesso!');
         }
     }
@@ -2402,7 +2464,7 @@
             saveProfile();
             
             if (permission === 'granted') {
-                console.log('🔔 Notifications enabled');
+                // console.log('🔔 Notifications enabled');
                 // Show test notification
                 new Notification('✅ Notificações Habilitadas!', {
                     body: 'Você receberá alertas sobre spawns dos bosses.',
@@ -2599,21 +2661,171 @@ window.newDraw = newDraw;
     // Initialize profile system
     loadProfile();
 
+    // Função de inicialização assíncrona
+    async function initializeSystem() {
+        try {
+            console.log('🚀 Inicializando sistema...');
+            
+            // Inicializa sistemas básicos imediatamente
+            updateTimeDisplay();
+            renderBosses();
+            
+            // Carrega dados dos subservidores e aguarda completar
+            // console.log('⏳ Carregando dados dos subservidores...');
+            await fetchServerTimes();
+            
+            // Só após carregar os dados, inicializa o countdown timer
+            if (serverDataLoaded) {
+                // console.log('✅ Dados carregados, iniciando countdown timer...');
+                updateCountdownTimer();
+                
+                // Set up intervals apenas após dados carregados
+                setInterval(updateCountdownTimer, 1000);
+                setInterval(renderBosses, 60000);
+                setInterval(updateTimeDisplay, 1000);
+                
+                // Re-fetch server data every 5 minutes
+                setInterval(fetchServerTimes, 300000);
+                
+                // console.log('✅ Sistema completamente inicializado');
+            } else {
+                // console.log('⚠️ Dados não carregados, tentando novamente em 5 segundos...');
+                setTimeout(initializeSystem, 5000);
+            }
+            
+        } catch (error) {
+            console.error('❌ Erro na inicialização:', error);
+            
+            // Mesmo com erro, inicializa o básico
+            updateTimeDisplay();
+            
+            // Tenta novamente em 10 segundos
+            console.log('🔄 Tentando novamente em 10 segundos...');
+            setTimeout(initializeSystem, 10000);
+        }
+    }
+
     // Initialize all systems
-    fetchServerTimes();
-    renderBosses();
-    updateTimeDisplay();
-    updateCountdownTimer();
-    
-    // Set up intervals
-    setInterval(updateCountdownTimer, 1000);
-    setInterval(renderBosses, 60000);
-    setInterval(updateTimeDisplay, 1000);
+    initializeSystem();
     
     // Initialize notifications after DOM is ready
     setTimeout(() => {
         requestNotificationPermission();
     }, 1000);
+
+    // Find next boss to appear using server reference times
+    function findNextBossWithServerTimes() {
+        // console.log('🔍 Debug: serverTimesData:', serverTimesData);
+        // console.log('📡 serverDataLoaded:', serverDataLoaded);
+        
+        // Se os dados ainda não foram carregados, retorna null
+        if (!serverDataLoaded) {
+            // console.log('⏳ Aguardando carregamento dos dados dos subservidores...');
+            return null;
+        }
+        
+        if (!serverTimesData || serverTimesData.length === 0) {
+            // console.log('⚠️ Sem dados dos subservidores, usando função original');
+            // Fallback para a função original se não houver dados dos subservidores
+            return findNextBossOriginal();
+        }
+
+        const now = getSaoPauloDate();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        
+        // console.log(`🕐 Hora atual: ${currentHour}:${String(currentMinute).padStart(2, '0')}`);
+        
+        let nextBoss = null;
+        let minTimeToNext = Infinity;
+        
+        // Para cada servidor com horário de referência
+        serverTimesData.forEach(serverData => {
+            const subserverName = serverData.Idhas;
+            const referenceMinute = parseInt(serverData.Horario);
+            
+            // console.log(`📡 Processando servidor "${subserverName}": referência ${referenceMinute}`);
+            
+            // TODOS os bosses nascem em TODOS os servidores
+            // Então verifica cada boss em cada servidor
+            allBossesData.forEach(boss => {
+                // Para cada horário que este boss aparece
+                boss.horarios.forEach(hour => {
+                    // Calcula o horário real de spawn (hora fixa + minuto de referência do servidor)
+                    const spawnHour = hour;
+                    const spawnMinute = referenceMinute;
+                    const spawnTimeInMinutes = spawnHour * 60 + spawnMinute;
+                    const currentTimeInMinutes = currentHour * 60 + currentMinute;
+                    
+                    let timeToNext;
+                    
+                    if (spawnTimeInMinutes > currentTimeInMinutes) {
+                        // Boss vai nascer ainda hoje
+                        timeToNext = spawnTimeInMinutes - currentTimeInMinutes;
+                    } else {
+                        // Boss vai nascer no próximo dia
+                        timeToNext = (24 * 60) - currentTimeInMinutes + spawnTimeInMinutes;
+                    }
+                    
+                    // console.log(`🐉 ${boss.nome} em "${subserverName}" às ${String(spawnHour).padStart(2, '0')}:${String(spawnMinute).padStart(2, '0')} - Faltam ${timeToNext} minutos`);
+                    
+                    if (timeToNext < minTimeToNext) {
+                        minTimeToNext = timeToNext;
+                        
+                        nextBoss = {
+                            ...boss,
+                            nextHour: spawnHour,
+                            nextMinute: spawnMinute,
+                            subserver: subserverName,
+                            timeToNext: timeToNext,
+                            spawnTime: `${String(spawnHour).padStart(2, '0')}:${String(spawnMinute).padStart(2, '0')}`
+                        };
+                        
+                        // console.log(`✅ Novo próximo boss: ${nextBoss.nome} em "${subserverName}" às ${nextBoss.spawnTime}`);
+                    }
+                });
+            });
+        });
+        
+        // console.log('🎯 Resultado final:', nextBoss);
+        return nextBoss;
+    }
+
+    // Função original para fallback
+    function findNextBossOriginal() {
+        const now = getSaoPauloDate();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        const currentTimeInMinutes = currentHour * 60 + currentMinute;
+        
+        let nextBoss = null;
+        let minTimeToNext = Infinity;
+        
+        allBossesData.forEach(boss => {
+            boss.horarios.forEach(hour => {
+                const bossTimeInMinutes = hour * 60;
+                let timeToNext;
+                
+                if (bossTimeInMinutes > currentTimeInMinutes) {
+                    timeToNext = bossTimeInMinutes - currentTimeInMinutes;
+                } else {
+                    // Next day
+                    timeToNext = (24 * 60) - currentTimeInMinutes + bossTimeInMinutes;
+                }
+                
+                if (timeToNext < minTimeToNext) {
+                    minTimeToNext = timeToNext;
+                    nextBoss = {
+                        ...boss,
+                        nextHour: hour,
+                        timeToNext: timeToNext
+                    };
+                }
+            });
+        });
+        
+        return nextBoss;
+    }
 </script>
 
 </body>
