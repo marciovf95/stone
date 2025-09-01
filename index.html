@@ -1642,6 +1642,7 @@
         }
     ];
 
+
     const bossesContainer = document.getElementById('bosses-container');
     const timeDisplay = document.getElementById('current-time');
     const filterSelect = document.getElementById('filter-select');
@@ -1678,6 +1679,33 @@
         if (!audioContext) {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
         }
+    }
+
+    function getSaoPauloDate() {
+    // Retorna um objeto Date ajustado para o fuso de São Paulo
+    const now = new Date();
+    // Pega o horário local de São Paulo usando Intl
+    const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Sao_Paulo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    }).formatToParts(now);
+
+    // Extrai as partes
+    const year = parts.find(p => p.type === 'year').value;
+    const month = parts.find(p => p.type === 'month').value;
+    const day = parts.find(p => p.type === 'day').value;
+    const hour = parts.find(p => p.type === 'hour').value;
+    const minute = parts.find(p => p.type === 'minute').value;
+    const second = parts.find(p => p.type === 'second').value;
+
+    // Cria um novo Date no fuso de São Paulo
+    return new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
     }
 
     // Generate notification sound
@@ -1849,7 +1877,7 @@
     }
 
     function updateTimeDisplay() {
-        const now = new Date();
+        const now = getSaoPauloDate()
         const timeZone = 'America/Sao_Paulo';
 
         // Crie um formatador para obter as partes da data e hora
@@ -1891,7 +1919,7 @@
     }
 
     function getNextAppearance(horarios) {
-        const now = new Date();
+        const now = getSaoPauloDate();
         const currentHour = now.getHours();
         const sortedHorarios = horarios.slice().sort((a, b) => a - b);
         
@@ -1905,7 +1933,7 @@
 
     // Find next boss to appear
     function findNextBoss() {
-        const now = new Date();
+        const now = getSaoPauloDate();
         const currentHour = now.getHours();
         const currentMinute = now.getMinutes();
         const currentTimeInMinutes = currentHour * 60 + currentMinute;
@@ -1948,7 +1976,7 @@
             return;
         }
         
-        const now = new Date();
+        const now = getSaoPauloDate();
         const timeToNext = nextBoss.timeToNext;
         const hours = Math.floor(timeToNext / 60);
         const minutes = timeToNext % 60;
@@ -2021,7 +2049,7 @@
             earlyWarning: false
         },
         notificationsEnabled: false,
-        lastAccess: new Date().toISOString(),
+        lastAccess: getSaoPauloDate().toISOString(),
         stats: {
             totalVisits: 0,
             favoritesCount: 0
@@ -2073,7 +2101,7 @@
 
         // Passo 4: Renderizar a lista
         bossesContainer.innerHTML = '';
-        const currentHour = new Date().getHours();
+        const currentHour = getSaoPauloDate().getHours();
         
         sortedBosses.forEach(info => {
             const bossCard = document.createElement('div');
@@ -2201,7 +2229,7 @@
         
         // Track visit
         userProfile.stats.totalVisits++;
-        userProfile.lastAccess = new Date().toISOString();
+        userProfile.lastAccess = getSaoPauloDate().toISOString();
         saveProfile();
     }
 
@@ -2310,7 +2338,7 @@
                 favoritesBosses: [],
                 soundSettings: { enabled: false, type: 'beep', volume: 50, earlyWarning: false },
                 notificationsEnabled: false,
-                lastAccess: new Date().toISOString(),
+                lastAccess: getSaoPauloDate().toISOString(),
                 stats: { totalVisits: 0, favoritesCount: 0 }
             };
             updateProfileDisplay();
@@ -2467,7 +2495,7 @@ function displayResults(numbers) {
         }, index * 100);
     });
     
-    timeSpan.textContent = new Date().toLocaleString('pt-BR');
+    timeSpan.textContent = getSaoPauloDate().toLocaleString('pt-BR');
     resultsDiv.style.display = 'block';
     currentResults = finalNumbers;
     
@@ -2478,7 +2506,7 @@ function displayResults(numbers) {
 function copyResults() {
     if (currentResults.length === 0) return;
     
-    const text = `Números sorteados: ${currentResults.join(', ')}\nData: ${new Date().toLocaleString('pt-BR')}`;
+    const text = `Números sorteados: ${currentResults.join(', ')}\nData: ${getSaoPauloDate().toLocaleString('pt-BR')}`;
     
     navigator.clipboard.writeText(text).then(() => {
         // Simple feedback
