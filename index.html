@@ -15,11 +15,11 @@
     <meta name="msapplication-config" content="/browserconfig.xml">
     
     <!-- PWA Icons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_valento.webp">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_babel.webp">
-    <link rel="icon" type="image/png" sizes="16x16" href="https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_kelvezu.webp">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/bosses/miniaturas/mini_valento.webp">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/bosses/miniaturas/mini_babel.webp">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/bosses/miniaturas/mini_kelvezu.webp">
     <!-- <link rel="manifest" href="/manifest.json"> --> <!-- Desabilitado para desenvolvimento local -->
-    <link rel="mask-icon" href="https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_yagditha.webp" color="#4CAF50">
+    <link rel="mask-icon" href="img/bosses/miniaturas/mini_yagditha.webp" color="#4CAF50">
     <style>
         /* CSS Variables for Theme System */
         :root {
@@ -454,23 +454,25 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            object-fit: cover;
+            object-fit: containcover;
             border: 2px solid #4CAF50;
         }
-
+        
         .boss-header .boss-spawn-img {
             width: 100px;
             border-radius: 4px;
-            border: 1px solid #4CAF50;
+            border: 1px solid #000000;
             margin-top: 5px;
             transition: transform 0.3s ease;
             cursor: pointer;
+            
+
         }
         .boss-header .boss-spawn-img:hover {
             transform: scale(2.5);
             z-index: 1000;
             position: relative;
-            border: 2px solid #4CAF50;
+            border: 2px solid #000000;
         }
         
         .boss-header h2 {
@@ -992,7 +994,7 @@
                 transform: scale(3);
                 z-index: 1000;
                 position: relative;
-                border: 2px solid #4CAF50;
+                
             }
 
             .nav-tab {
@@ -1522,114 +1524,121 @@
 <script>
     const allBossesData = [
         {
-            nome: "Babel", local: "Estrada de Ferro do Caos", horarios: [0, 3, 6, 9, 12, 15, 18, 21],
+            nome: "Babel", local: "Estrada de Ferro do Caos (Iron 1)", horarios: [0, 3, 6, 9, 12, 15, 18, 21],
             drop: ["Itens do mapa, Essência do Babel e Receita de Relíquias (0,60% de chance)."],
             dano1: ["Não tem roleta"], dano2: ["Não tem roleta"], dano3: ["Não tem roleta"],
-            img: "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_babel.webp",
-            spaw : "https://ptlab.com.br/wp-content/uploads/2024/01/estrada-de-ferro-do-caos.png"
+            img: "img/bosses/miniaturas/mini_babel.webp",
+            spaw : "img/bosses/maps/estrada-de-ferro-do-caos.png"
         },
         {
-            nome: "Babel", local: "Coração de Perum", horarios: [1, 4, 7, 10, 13, 16, 19, 22],
+            nome: "Babel", local: "Coração de Perum (Iron 2)", horarios: [1, 4, 7, 10, 13, 16, 19, 22],
             drop: ["Itens do mapa, Essência do Babel e Receita de Relíquias (0,60% de chance)."],
             dano1: ["Não tem roleta"], dano2: ["Não tem roleta"], dano3: ["Não tem roleta"],
-            img: "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_babel.webp",
-            spaw : "https://ptlab.com.br/wp-content/uploads/2024/01/coracao-de-perum.png"
+            img: "img/bosses/miniaturas/mini_babel.webp",
+            spaw : "img/bosses/maps/coracao-de-perum.png"
         },
         {
-            nome: "Fúria", local: "Templo Maldito - 3° Andar", horarios: [2, 5, 8, 11, 14, 17, 20, 23],
+            nome: "Fúria", local: "Templo Maldito - 3° Andar (S3)", horarios: [2, 5, 8, 11, 14, 17, 20, 23],
             drop: ["Itens do mapa, Essência do Fúria e Receita de Relíquias (1,20% de chance)."],
             dano1: ["Não tem roleta"], dano2: ["Não tem roleta"], dano3: ["Não tem roleta"],
-            img: "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_furia.webp",
-            spaw : "https://ptlab.com.br/wp-content/uploads/2024/01/templo-maldito-3.png"
+            img: "img/bosses/miniaturas/mini_furia.webp",
+            spaw : "img/bosses/maps/templo-maldito-3.png"
         },
         {
-            nome: "Valento", local: "Vale Gallubia", horarios: [1, 5, 9, 13, 17, 21],
+            nome: "Valento", local: "Vale Gallubia (ICE2)", horarios: [1, 5, 9, 13, 17, 21],
             drop: ["Itens do mapa, Essência do Valento e Receita de Relíquias (1,60% de chance), e Anel do Valento (0,17% de Chance, e 0,19% no Omega)."],
             dano1: ["Não tem roleta"], dano2: ["Não tem roleta"], dano3: ["Não tem roleta"],
-            img: "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_valento.webp",
-            spaw : "https://ptlab.com.br/wp-content/uploads/2024/01/vale-gallubia.png"
+            img: "img/bosses/miniaturas/mini_valento.webp",
+            spaw : "img/bosses/maps/vale-gallubia.png"
         },
         {
             nome: "Kelvezu", local: "Covil do Kelvezu", horarios: [1, 7, 13, 19],
             drop: ["Itens do mapa, Essência do Kelvezu e Receita de Relíquias (1,20% de chance), e Colar do Kelvezu (0,17% de Chance, e 0,19% no Omega)."],
             dano1: ["Não tem roleta"], dano2: ["Não tem roleta"], dano3: ["Não tem roleta"],
-            img: "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_kelvezu.webp",
-            spaw : "https://ptlab.com.br/wp-content/uploads/2024/01/covil-do-kelvezu.png"
+            img: "img/bosses/miniaturas/mini_kelvezu.webp",
+            spaw : "img/bosses/maps/covil-do-kelvezu.png"
         },
         {
-            nome: "Mokova", local: "Templo Perdido", horarios: [2, 8, 14, 20],
+            nome: "Mokova", local: "Templo Perdido (Lost 2)", horarios: [2, 8, 14, 20],
             drop: ["Itens do mapa, Essência do Mokova e Botas do Mokova (0,14% de Chance, e 0,16% no Omega)."],
             dano1: ["Não tem roleta"], dano2: ["Não tem roleta"], dano3: ["Não tem roleta"],
-            img: "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_mokova.webp",
-            spaw : "https://ptlab.com.br/wp-content/uploads/2024/01/templo-perdido.png"
+            img: "img/bosses/miniaturas/mini_mokova.webp",
+            spaw : "img/bosses/maps/templo-perdido.png"
         },
         {
-            nome: "Shy", local: "Torre Sem Fim 3° Andar", horarios: [7, 15, 23],
+            nome: "Shy", local: "Torre Sem Fim 3° Andar (ET3)", horarios: [7, 15, 23],
             drop: ["Itens do mapa, Essência do Shy e Receita de Relíquias (1,60% de chance), e Anel Shy (0,14% de Chance, e 0,16% no Omega)."],
             dano1: ["Não tem roleta"], dano2: ["Não tem roleta"], dano3: ["Não tem roleta"],
-            img: "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_shy.webp",
-            spaw : "https://ptlab.com.br/wp-content/uploads/2024/01/torre-sem-fim-3-andar.png"
+            img: "img/bosses/miniaturas/mini_shy.webp",
+            spaw : "img/bosses/maps/torre-sem-fim-3-andar.png"
         },
         {
-            nome: "Tulla", local: "Mina de Gelo", horarios: [4, 12, 20],
+            nome: "Tulla", local: "Mina de Gelo (Mina)", horarios: [4, 12, 20],
             drop: ["Itens do mapa, Essência do Tulla e Receita de Relíquias (1,60% de chance), e Amuleto Tulla (0,14% de Chance, e 0,16% no Omega)."],
             dano1: ["Não tem roleta"], dano2: ["Não tem roleta"], dano3: ["Não tem roleta"],
-            img: "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_tulla.webp",
-            spaw : "https://ptlab.com.br/wp-content/uploads/2024/01/mina-de-gelo.png"
+            img: "img/bosses/miniaturas/mini_tulla.webp",
+            spaw : "img/bosses/maps/mina-de-gelo.png"
         },
         {
-            nome: "Draxos", local: "Laboratório Secreto", horarios: [9, 19],
+            nome: "Draxos", local: "Laboratório Secreto (Lab)", horarios: [9, 19],
             drop: ["Itens do mapa, Essência do Draxos (2,40%), Receita de Relíquia (2,40%), Botas do Draxos (0,14% de Chance, e 0,16% no Omega)"],
             dano1: ["3x Sol (45%), 3x Meteoritos Idetas (12%), Runas Superiores (38%) ou Pergaminho de Invocação de Boss (Mokova, Shy ou Tulla) (5%)."],
             dano2: ["Pergaminho de Invocação do Draxos (10%), Runas Superiores (26%), Buff Especial (3H) (20%), Pergaminho de Invocação de Boss (Mokova, Shy ou Tulla) (15%), Itens de Ataque level 118 (17%), 33.766.200.000 pontos de Experiência (5%) ou Essências do Aging (I), (A) ou (S) (10%)."],
             dano3: ["Pergaminho de Invocação do Draxos (10%), Caixa Priston (3H) (8%), Pergaminho de Invocação de Boss (Mokova, Shy ou Tulla) (15%), Itens de Defesa level 118 (21%), Itens de Ataque level 118 (21%), Essência do Draxos (5%), 41.496.000.000 pontos de Experiência (5%) ou Essências do Aging (I), (A) ou (S) (10%)."],
-            img: "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_draxos.webp",
-            spaw : "https://ptlab.com.br/wp-content/uploads/2024/01/laboratorio-secreto.png"
+            img: "img/bosses/miniaturas/mini_draxos.webp",
+            spaw : "img/bosses/maps/laboratorio-secreto.png"
         },
         {
-            nome: "Greedy", local: "Arma Antiga", horarios: [10, 21],
+            nome: "Greedy", local: "Arma Antiga (Arma)", horarios: [10, 21],
             drop: ["Itens do mapa, Essência do Greedy e Receita de Relíquias (2,40% de chance), e Luvas do Greedy (0,14% de Chance, e 0,16% no Omega)."],
             dano1: ["3x Sol (45%), 3x Meteoritos Idetas (12%), Runas Superiores (38%) ou Pergaminho de Invocação de Boss (Mokova, Shy ou Tulla) (5%)."],
             dano2: ["Pergaminho de Invocação do Greedy (10%), Runas Superiores (26%), Buff Especial (3H) (20%), Pergaminho de Invocação de Boss (Tulla, Shy ou Draxos) (15%), Itens de Ataque level 123 (17%), 41.496.000.000 pontos de Experiência (5%) ou Essências do Aging (I), (A) ou (S) (2%)."],
             dano3: ["Pergaminho de Invocação do Greedy (10%), Pergaminho de Invocação de Boss (Shy, Tulla ou Draxos) (15%), Essências do Aging (I), (A) ou (S) (10%), Itens de Defesa level 123 (21%), Itens de Ataque level 123 (21%), Caixa Priston (3H) (8%), Essência do Greedy (5%), ou 69.949.440.000 pontos de Experiência (5%)."],
-            img: "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_greedy.webp",
-            spaw : "https://ptlab.com.br/wp-content/uploads/2024/01/arma-antiga.png"
+            img: "img/bosses/miniaturas/mini_greedy.webp",
+            spaw : "img/bosses/maps/arma-antiga.png"
         },
         {
-            nome: "Espectro do<br>Midranda", local: "Estrada Sombria", horarios: [11, 19],
+            nome: "Espectro do<br>Midranda", local: "Estrada Sombria (Estrada)", horarios: [11, 19],
             drop: ["Itens do mapa, Receita de Relíquia"],
             dano1: ["3x Sol (45%), 3x Meteoritos Idetas (12%), Runas Superiores (38%) ou Pergaminho de Invocação de Boss (Greedy, Tulla ou Draxos) (5%)."],
             dano2: ["Pergaminho de Invocação Espectro do Midranda (10%), Runas Superiores (26%), Buff Especial (3H) (20%), Pergaminho de Invocação de Boss (Draxos, Tulla ou Greddy) (15%), Itens de Ataque level 130 (17%), 69.959.440.000 pontos de Experiência (5%) ou Essências do Aging (I), (A) ou (S) (2%)."],
             dano3: ["Pergaminho de Invocação Espectro do Midranda (10%), Pergaminho de Invocação de Boss (Greedy, Tulla ou Draxos) (15%), Essências do Aging (I), (A) ou (S) (10%), Itens de Defesa level 130 (21%), Itens de Ataque level 130 (21%), Caixa Priston (3H) (8%), Essências do Babel, Fúria, Valento, Kelvezu, Mokova, Shy, Tulla, Draxos ou Greedy (5%), ou 84.779.847.000 pontos de Experiência (5%)."],
-            img: "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_espectro.webp",
-            spaw : "https://ptlab.com.br/wp-content/uploads/2024/01/estrada-sombria.png"
+            img: "img/bosses/miniaturas/mini_espectro.webp",
+            spaw : "img/bosses/maps/estrada-sombria.png"
         },
         {
-            nome: "Yagditha", local: "Abismo do Mar", horarios: [20],
+            nome: "Yagditha", local: "Abismo do Mar (AB1)", horarios: [20],
             drop: ["Itens do mapa, Essência do Yagditha e Receita de Relíquias (3,69% de chance), Amuleto do Yagditha (Alfa, Beta, Gama e Zeta) (0,16% de chance) Amuleto do Yagditha (Omega) (0,25% de chance)."],
             dano1: ["3x Sol (45%), 3x Meteoritos Idetas (12%), Runas Superiores (38%) ou Pergaminho de Invocação de Boss (Greedy, Draxos ou Espectro do Midranda) (5%)."],
             dano2: ["Pergaminho de Invocação Espectro do Midranda (20%), Runas Superiores (26%), Buff Especial (3H) (15%), Pergaminho de Invocação de Boss (Draxos ou Greddy) (15%), Itens de Ataque level 140 (17%), 84.779.847.000 pontos de Experiência (5%) ou Essências do Aging (I), (A) ou (S) (2%)."],
             dano3: ["Pergaminho de Invocação Espectro do Midranda (10%), Pergaminho de Invocação de Boss (Greedy ou Draxos) (15%), Essências do Aging (I), (A) ou (S) (15%), Itens de Defesa level 140 (21%), Itens de Ataque level 140 (21%), Caixa Priston (3H) (8%), Essências do Yagditha (5%), ou 135.933.805.500 pontos de Experiência (5%)."],
-            img: "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_yagditha.webp",
-            spaw : "https://ptlab.com.br/wp-content/uploads/2024/01/abismo-do-mar.png"
+            img: "img/bosses/miniaturas/mini_yagditha.webp",
+            spaw : "img/bosses/maps/abismo-do-mar.png"
         },
         {
-            nome: "Dragão Snowstorn", local: "Abismo do Mar Congelado", horarios: [11, 22],
+            nome: "Dragão Snowstorn", local: "Abismo do Mar Congelado (AB2)", horarios: [11, 22],
             drop: ["Itens do mapa"],
             dano1: ["3x Sol (45%), 3x Meteoritos Idetas (12%), Runas Superiores (38%) ou Pergaminho de Invocação de Boss (Greedy, Draxos ou Espectro do Midranda) (5%)."],
             dano2: ["Pergaminho de Invocação Espectro do Midranda (20%), Runas Superiores (26%), Buff Especial (3H) (15%), Pergaminho de Invocação de Boss (Draxos ou Greddy) (15%), Itens de Ataque level 140 (17%), 135.933.805.500 pontos de Experiência (5%) ou Essências do Aging (I), (A) ou (S) (2%)."],
             dano3: ["Pergaminho de Invocação Espectro do Midranda (10%), Pergaminho de Invocação de Boss (Greedy ou Draxos) (15%), Essências do Aging (I), (A) ou (S) (15%), Itens de Defesa level 140 (21%), Itens de Ataque level 140 (21%), Caixa Priston (3H) (8%), Essências do Babel, Valento, Kelvezu, Fúria, Mokova, Tulla, Draxos, Greedy e Yagditha (5%), ou 150.878.802.000 pontos de Experiência (5%)."],
-            img: "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_snow.webp",
-            spaw : "https://ptlab.com.br/wp-content/uploads/2024/01/abismo-do-mar-congelado.png"
+            img: "img/bosses/miniaturas/mini_snow.webp",
+            spaw : "img/bosses/maps/abismo-do-mar-congelado.png"
         },
         {
-            nome: "Midranda<br>Ressurgido", local: "Santuário do Abismo", horarios: [19],
+            nome: "Midranda<br>Ressurgido", local: "Santuário do Abismo (AB3)", horarios: [19],
             drop: ["Itens do mapa, Essência do Midranda e Receita de Relíquias (4,80% de chance), e Brinco do Midranda (Alfa, Beta, Gama e Zeta. 0,16% de chance) e (Omega 0,18% de chance)."],
             dano1: ["3x Sol (45%), 3x Meteoritos Idetas (12%), Runas Superiores (38%) ou Pergaminho de Invocação de Boss (Greedy, Espectro do Midranda ou Yagditha) (5%)."],
             dano2: ["Pergaminho de Invocação Espectro do Midranda (20%), Runas Superiores (26%), Buff Especial (3H) (15%), Pergaminho de Invocação de Boss (Yagditha ou Greddy) (15%), Itens de Ataque level 140 (17%), 150.878.802.000 pontos de Experiência (5%) ou Essências do Aging (I), (A) ou (S) (2%)."],
             dano3: ["Pergaminho de Invocação Espectro do Midranda (10%), Pergaminho de Invocação de Boss (Greedy ou Yagditha) (15%), Essências do Aging (I), (A) ou (S) (15%), Itens de Defesa level 140 (21%), Itens de Ataque level 140 (21%), Caixa Priston (3H) (8%), Essência do Midranda (5%), ou 199.600.125.000 pontos de Experiência (5%)."],
-            img: "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_midrandaress.webp",
-            spaw : "https://ptlab.com.br/wp-content/uploads/2024/01/santuario-do-abismo.png"
+            img: "img/bosses/miniaturas/mini_midrandaress.webp",
+            spaw : "img/bosses/maps/santuario-do-abismo.png"
+        },
+        {
+            nome: "Maphinguary<br>(Evento)", local: "Mais Frequentado Santuário do Abismo (AB1)<br><b>Outros Lugares:</b> AB3, Arma, Lab, Mina, Lost1, Ice2", horarios: [5,9,15,21,23],
+            drop: ["Pelagem do Maphinguary, Tiara da Boitatá, Penumbra do Tutu, Peruca da Kuca ou o Gorro do Hopiperorê"],
+            dano1: ["Não tem roleta"], dano2: ["Não tem roleta"], dano3: ["Não tem roleta"],
+            img: "img/bosses/miniaturas/mini_maphinguary.jpg",
+            spaw : "img/bosses/maps/abismo-do-mar-oposto.png"
         }
     ];
 
@@ -1992,7 +2001,7 @@
         if ('Notification' in window && Notification.permission === 'granted') {
             new Notification(title, {
                 body: body,
-                icon: 'https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_babel.webp'
+                icon: 'img/bosses/miniaturas/mini_babel.webp'
             });
         }
     }
@@ -2369,7 +2378,7 @@
                 // Show test notification
                 new Notification('✅ Notificações Habilitadas!', {
                     body: 'Você receberá alertas sobre spawns dos bosses.',
-                    icon: 'https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_babel.webp'
+                    icon: 'img/bosses/miniaturas/mini_babel.webp'
                 });
             }
         }
@@ -2385,8 +2394,8 @@
         if ('Notification' in window && Notification.permission === 'granted') {
             const notification = new Notification(title, {
                 body: body,
-                icon: 'https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_babel.webp',
-                badge: 'https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_valento.webp',
+                icon: 'img/bosses/miniaturas/mini_babel.webp',
+                badge: 'img/bosses/miniaturas/mini_valento.webp',
                 tag: `boss-${bossName}`,
                 requireInteraction: isFavoriteBoss, // Keep favorite boss notifications until dismissed
                 vibrate: isFavoriteBoss ? [200, 100, 200] : [100, 50, 100]
