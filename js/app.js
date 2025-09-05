@@ -600,92 +600,57 @@ class AppManager {
      */
     findNextBossWithServerTimes() {
         if (!this.serverDataLoaded || !this.serverTimesData.length) {
-            return null;
-        }
+        return null;
+    }
 
-        const now = getSaoPauloDate();
-        const currentHour = now.getHours();
-        const currentMinute = now.getMinutes();
+    const now = getSaoPauloDate();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
 
-        let bossesNextHour = [];
+    let bossesUpcoming = [];
 
-        this.serverTimesData.forEach(serverData => {
-            const subserverName = serverData.Idhas;
-            const referenceMinute = parseInt(serverData.Horario);
+    // 1. Coletar todos os bosses e calcular o tempo até o próximo spawn
+    this.serverTimesData.forEach(serverData => {
+        const subserverName = serverData.Idhas;
+        const referenceMinute = parseInt(serverData.Horario);
 
-            BOSSES_DATA.forEach(boss => {
-                boss.horarios.forEach(hour => {
-                    const spawnHour = hour;
-                    const spawnMinute = referenceMinute;
-                    const spawnTimeInMinutes = spawnHour * 60 + spawnMinute;
-                    const currentTimeInMinutes = currentHour * 60 + currentMinute;
+        BOSSES_DATA.forEach(boss => {
+            boss.horarios.forEach(hour => {
+                const spawnHour = hour;
+                const spawnMinute = referenceMinute;
+                const spawnTimeInMinutes = spawnHour * 60 + spawnMinute;
+                const currentTimeInMinutes = currentHour * 60 + currentMinute;
 
-                    let timeToNext;
-                    if (spawnTimeInMinutes > currentTimeInMinutes) {
-                        timeToNext = spawnTimeInMinutes - currentTimeInMinutes;
-                    } else {
-                        timeToNext = (24 * 60) - currentTimeInMinutes + spawnTimeInMinutes;
-                    }
+                let timeToNext;
+                if (spawnTimeInMinutes > currentTimeInMinutes) {
+                    timeToNext = spawnTimeInMinutes - currentTimeInMinutes;
+                } else {
+                    timeToNext = (24 * 60) - currentTimeInMinutes + spawnTimeInMinutes;
+                }
 
-                    // Considera bosses que vão nascer na próxima hora
-                    if (timeToNext >= 0 && timeToNext < 60) {
-                        bossesNextHour.push({
-                            ...boss,
-                            nextHour: spawnHour,
-                            nextMinute: spawnMinute,
-                            subserver: subserverName,
-                            timeToNext: timeToNext,
-                            spawnTime: `${String(spawnHour).padStart(2, '0')}:${String(spawnMinute).padStart(2, '0')}`
-                        });
-                    }
+                bossesUpcoming.push({
+                    ...boss,
+                    nextHour: spawnHour,
+                    nextMinute: spawnMinute,
+                    subserver: subserverName,
+                    timeToNext: timeToNext,
+                    spawnTime: `${String(spawnHour).padStart(2, '0')}:${String(spawnMinute).padStart(2, '0')}`
                 });
             });
         });
+    });
 
-        // Se houver bosses na próxima hora, retorna o de maior lvl
-        if (bossesNextHour.length > 0) {
-            bossesNextHour.sort((a, b) => b.lvl - a.lvl); // Maior lvl primeiro
-            return bossesNextHour[0];
-        }
+    // 2. Encontrar o menor timeToNext (próximo horário de spawn)
+    let minTimeToNext = Math.min(...bossesUpcoming.map(b => b.timeToNext));
 
-        // Se não houver, retorna o mais próximo como fallback (como era antes)
-        let nextBoss = null;
-        let minTimeToNext = Infinity;
+    // 3. Filtrar todos os bosses que vão nascer nesse exato horário
+    let bossesAtNextSpawn = bossesUpcoming.filter(b => b.timeToNext === minTimeToNext);
 
-        this.serverTimesData.forEach(serverData => {
-            const subserverName = serverData.Idhas;
-            const referenceMinute = parseInt(serverData.Horario);
+    // 4. Entre esses, pegar o de maior lvl
+    bossesAtNextSpawn.sort((a, b) => b.lvl - a.lvl);
 
-            BOSSES_DATA.forEach(boss => {
-                boss.horarios.forEach(hour => {
-                    const spawnHour = hour;
-                    const spawnMinute = referenceMinute;
-                    const spawnTimeInMinutes = spawnHour * 60 + spawnMinute;
-                    const currentTimeInMinutes = currentHour * 60 + currentMinute;
-
-                    let timeToNext;
-                    if (spawnTimeInMinutes > currentTimeInMinutes) {
-                        timeToNext = spawnTimeInMinutes - currentTimeInMinutes;
-                    } else {
-                        timeToNext = (24 * 60) - currentTimeInMinutes + spawnTimeInMinutes;
-                    }
-
-                    if (timeToNext < minTimeToNext) {
-                        minTimeToNext = timeToNext;
-                        nextBoss = {
-                            ...boss,
-                            nextHour: spawnHour,
-                            nextMinute: spawnMinute,
-                            subserver: subserverName,
-                            timeToNext: timeToNext,
-                            spawnTime: `${String(spawnHour).padStart(2, '0')}:${String(spawnMinute).padStart(2, '0')}`
-                        };
-                    }
-                });
-            });
-        });
-
-        return nextBoss;
+    // 5. Retornar o boss de maior lvl do próximo horário
+    return bossesAtNextSpawn[0] || null;
     }
 
     /**
