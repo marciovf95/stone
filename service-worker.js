@@ -86,8 +86,8 @@ self.addEventListener('sync', event => {
 self.addEventListener('push', event => {
   const options = {
     body: event.data ? event.data.text() : '🐉 Um boss está para spawnar!',
-    icon: 'https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_babel.webp',
-    badge: 'https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_valento.webp',
+    icon: 'img/bosses/miniaturas/mini_babel.webp',
+    badge: 'img/bosses/miniaturas/mini_valento.webp',
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
@@ -97,12 +97,12 @@ self.addEventListener('push', event => {
       {
         action: 'explore',
         title: 'Ver Boss',
-        icon: 'https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_kelvezu.webp'
+        icon: 'img/bosses/miniaturas/mini_kelvezu.webp'
       },
       {
         action: 'close', 
         title: 'Fechar',
-        icon: 'https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_shy.webp'
+        icon: 'img/bosses/miniaturas/mini_shy.webp'
       }
     ]
   };
