@@ -599,7 +599,7 @@ class AppManager {
      * Encontra próximo boss com dados do servidor
      */
     findNextBossWithServerTimes() {
-         if (!this.serverDataLoaded || !this.serverTimesData.length) {
+     if (!this.serverDataLoaded || !this.serverTimesData.length) {
         return null;
     }
 
