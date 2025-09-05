@@ -11,25 +11,25 @@
   "lang": "pt-BR",
   "icons": [
     {
-      "src": "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_babel.webp",
+      "src": "img/bosses/miniaturas/mini_babel.webp",
       "sizes": "64x64",
       "type": "image/webp",
       "purpose": "any maskable"
     },
     {
-      "src": "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_valento.webp", 
+      "src": "img/bosses/miniaturas/mini_valento.webp", 
       "sizes": "128x128",
       "type": "image/webp",
       "purpose": "any"
     },
     {
-      "src": "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_kelvezu.webp",
+      "src": "img/bosses/miniaturas/mini_kelvezu.webp",
       "sizes": "256x256", 
       "type": "image/webp",
       "purpose": "any"
     },
     {
-      "src": "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_yagditha.webp",
+      "src": "img/bosses/miniaturas/mini_yagditha.webp",
       "sizes": "512x512",
       "type": "image/webp", 
       "purpose": "any maskable"
@@ -41,14 +41,14 @@
       "short_name": "Timer",
       "description": "Ver o próximo boss a spawnar",
       "url": "/?view=timer",
-      "icons": [{"src": "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_babel.webp", "sizes": "96x96"}]
+      "icons": [{"src": "img/bosses/miniaturas/mini_babel.webp", "sizes": "96x96"}]
     },
     {
       "name": "Favoritos", 
       "short_name": "Favoritos",
       "description": "Ver seus bosses favoritos",
       "url": "/?view=favorites",
-      "icons": [{"src": "https://tioleobpt.com.br/imagens/Bosses/miniaturas/i_valento.webp", "sizes": "96x96"}]
+      "icons": [{"src": "img/bosses/miniaturas/mini_valento.webp", "sizes": "96x96"}]
     }
   ]
 } 
