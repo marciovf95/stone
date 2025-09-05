@@ -14,7 +14,7 @@ class AppManager {
         this.lastNotifiedBoss = null;
         this.userProfile = null;
         this.showOnlyFavorites = false;
-        
+
         // this.initializeApp(); // Inicialização movida para main.js
     }
 
@@ -23,28 +23,28 @@ class AppManager {
      */
     async initializeApp() {
         console.log('🚀 Inicializando aplicação...');
-        
+
         // Carrega perfil do usuário
         this.loadProfile();
-        
+
         // Inicializa sistemas básicos
         this.initializeBasicSystems();
-        
+
         // Carrega dados dos servidores
         await this.fetchServerTimes();
-        
+
         // Inicializa timers e eventos
         this.initializeTimersAndEvents();
-        
+
         // Inicializa sistema de abas
         this.initializeTabSystem();
-        
+
         // Inicializa sistema de loteria
         this.initializeLottery();
-        
+
         // Inicializa PWA
         this.initializePWA();
-        
+
         console.log('✅ Aplicação inicializada com sucesso');
     }
 
@@ -54,17 +54,17 @@ class AppManager {
     loadProfile() {
         this.userProfile = storageManager.loadProfile();
         console.log('📁 Perfil carregado:', this.userProfile);
-        
+
         // Atualiza estatísticas
         this.userProfile.stats.totalVisits++;
         this.userProfile.lastAccess = getSaoPauloDate().toISOString();
-        
+
         // Carrega configurações de som
         soundManager.loadSettings(this.userProfile.soundSettings);
-        
+
         // Atualiza interface
         this.updateProfileDisplay();
-        
+
         // Salva perfil atualizado
         this.saveProfile();
     }
@@ -82,13 +82,13 @@ class AppManager {
     initializeBasicSystems() {
         // Atualiza tempo
         this.updateTimeDisplay();
-        
+
         // Renderiza bosses
         this.renderBosses();
-        
+
         // Gera opções de horário dinamicamente
         this.generateTimeFilterOptions();
-        
+
         // Inicializa event listeners
         this.initializeEventListeners();
     }
@@ -119,14 +119,14 @@ class AppManager {
         const filterSelect = $('#filter-select');
         const timeFilterSelect = $('#time-filter-select');
         const sortSelect = $('#sort-select');
-        
+
         if (filterSelect) filterSelect.addEventListener('change', () => this.renderBosses());
         if (timeFilterSelect) timeFilterSelect.addEventListener('change', () => this.renderBosses());
         if (sortSelect) sortSelect.addEventListener('change', () => this.renderBosses());
-        
+
         // Scroll behavior para timer
         window.addEventListener('scroll', throttle(this.handleScroll.bind(this), 100));
-        
+
         // Cleanup na saída
         window.addEventListener('beforeunload', () => this.cleanup());
     }
@@ -139,7 +139,7 @@ class AppManager {
         setInterval(() => this.updateCountdownTimer(), API_CONFIG.UPDATE_INTERVAL);
         setInterval(() => this.renderBosses(), API_CONFIG.RENDER_INTERVAL);
         setInterval(() => this.updateTimeDisplay(), API_CONFIG.UPDATE_INTERVAL);
-        
+
         // Re-fetch de dados do servidor
         setInterval(() => this.fetchServerTimes(), API_CONFIG.FETCH_INTERVAL);
     }
@@ -151,23 +151,23 @@ class AppManager {
         try {
             console.log('🔄 Carregando dados dos servidores...');
             this.serverDataLoaded = false;
-            
+
             const response = await fetch(API_CONFIG.SHEET_URL);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            
+
             const data = await response.json();
             this.serverTimesData = data;
-            
+
             this.updateSubserversDisplay();
             this.serverDataLoaded = true;
             this.updateCountdownTimer();
-            
+
             console.log('✅ Dados dos servidores carregados');
         } catch (error) {
             console.error('❌ Erro ao carregar dados:', error);
-            
+
             // Usa dados mock em caso de erro
             this.serverTimesData = this.getMockServerData();
             this.updateSubserversDisplay();
@@ -190,13 +190,13 @@ class AppManager {
     updateSubserversDisplay() {
         const container = $('#subservers-container');
         if (!container) return;
-        
+
         container.innerHTML = '';
-        
+
         this.serverTimesData.forEach(item => {
             const name = item.Idhas;
             const time = item.Horario;
-            
+
             if (name && time !== undefined) {
                 const div = document.createElement('div');
                 div.className = 'subservidor';
@@ -227,19 +227,19 @@ class AppManager {
         const timeFilterSelect = $('#time-filter-select');
         const sortSelect = $('#sort-select');
         const bossesContainer = $('#bosses-container');
-        
+
         if (!bossesContainer) return;
-        
+
         const selectedFilter = filterSelect?.value || 'all';
         const selectedTimeFilter = timeFilterSelect?.value || 'all';
         const selectedSort = sortSelect?.value || 'next-spawn';
-        
+
         // Filtra bosses
         let filteredBosses = this.filterBosses(selectedFilter, selectedTimeFilter);
-        
+
         // Ordena bosses
         let sortedBosses = this.sortBosses(filteredBosses, selectedSort);
-        
+
         // Renderiza
         this.renderBossCards(sortedBosses, bossesContainer);
     }
@@ -254,21 +254,21 @@ class AppManager {
                 const dropString = boss.drop ? boss.drop.join(' ') : '';
                 if (!dropString.includes(itemFilter)) return false;
             }
-            
+
             // Filtro por favoritos
             if (this.showOnlyFavorites) {
                 if (!this.isFavorite(boss.nome)) return false;
             }
-            
+
             // Filtro por horário
             if (timeFilter !== 'all') {
                 const hourToFilter = parseInt(timeFilter);
                 if (!boss.horarios.includes(hourToFilter)) return false;
             }
-            
+
             return true;
         });
-        
+
         return filtered;
     }
 
@@ -277,7 +277,7 @@ class AppManager {
      */
     sortBosses(bosses, sortType) {
         const sorted = [...bosses];
-        
+
         if (sortType === 'next-spawn') {
             sorted.forEach(boss => {
                 boss.nextAppearance = this.getNextAppearance(boss.horarios);
@@ -290,7 +290,7 @@ class AppManager {
                 return chanceB - chanceA;
             });
         }
-        
+
         return sorted;
     }
 
@@ -300,7 +300,7 @@ class AppManager {
     renderBossCards(bosses, container) {
         container.innerHTML = '';
         const currentHour = getSaoPauloDate().getHours();
-        
+
         bosses.forEach(boss => {
             const card = this.createBossCard(boss, currentHour);
             container.appendChild(card);
@@ -313,7 +313,7 @@ class AppManager {
     createBossCard(boss, currentHour) {
         const card = document.createElement('div');
         card.className = 'boss-card';
-        
+
         // Estrela de favorito
         const favoriteStar = document.createElement('div');
         favoriteStar.className = `favorite-star ${this.isFavorite(boss.nome) ? 'favorited' : ''}`;
@@ -324,7 +324,7 @@ class AppManager {
             this.toggleFavorite(boss.nome);
         };
         card.appendChild(favoriteStar);
-        
+
         // Header do boss
         const header = document.createElement('div');
         header.className = 'boss-header';
@@ -333,27 +333,27 @@ class AppManager {
             <h2>${boss.nome}</h2>
             <img src="${boss.spaw}" alt="Mapa de ${boss.nome}" loading="lazy" class="boss-spawn-img">
         `;
-        
+
         // Informações do boss
         const info = document.createElement('div');
         info.className = 'boss-info';
-        
+
         const horariosString = boss.horarios.map(h => {
             const formattedHour = String(h).padStart(2, '0') + 'hXX';
             return h === currentHour ? `<span class="highlight">${formattedHour}</span>` : formattedHour;
         }).join(', ');
-        
+
         info.innerHTML = `
             <p><strong>Local:</strong> ${boss.local}</p>
             <p><strong>Horários:</strong> ${horariosString}</p>
         `;
-        
+
         // Adiciona seções de drops e danos
         this.addBossSections(info, boss);
-        
+
         card.appendChild(header);
         card.appendChild(info);
-        
+
         return card;
     }
 
@@ -367,14 +367,14 @@ class AppManager {
             { title: 'Dano 2 (350.000 a 999.999)', items: boss.dano2 },
             { title: 'Dano 3 (1.000.000 e superior)', items: boss.dano3 }
         ];
-        
+
         sections.forEach(section => {
-            if (section.items && section.items.length > 0 ) {
+            if (section.items && section.items.length > 0) {
                 const sectionTitle = document.createElement('h3');
                 sectionTitle.className = 'section-title';
                 sectionTitle.textContent = section.title;
                 infoElement.appendChild(sectionTitle);
-                
+
                 const ul = document.createElement('ul');
                 section.items.forEach(item => {
                     const li = document.createElement('li');
@@ -408,7 +408,7 @@ class AppManager {
     toggleFavoritesFilter() {
         this.showOnlyFavorites = !this.showOnlyFavorites;
         const toggle = $('#favorites-toggle');
-        
+
         if (toggle) {
             if (this.showOnlyFavorites) {
                 toggle.style.background = 'var(--text-accent)';
@@ -420,7 +420,7 @@ class AppManager {
                 toggle.title = 'Mostrar favoritos';
             }
         }
-        
+
         this.renderBosses();
     }
 
@@ -430,15 +430,15 @@ class AppManager {
     updateProfileDisplay() {
         const favoritesCount = $('#favorites-count');
         const notificationStatus = $('#notification-status');
-        
+
         if (favoritesCount) {
             favoritesCount.textContent = this.userProfile.favoritesBosses.length;
         }
-        
+
         if (notificationStatus) {
             notificationStatus.textContent = this.userProfile.notificationsEnabled ? 'Habilitadas' : 'Desabilitadas';
         }
-        
+
         // Atualiza UI das notificações
         this.updateNotificationUI();
     }
@@ -448,20 +448,20 @@ class AppManager {
      */
     updateNotificationUI() {
         const notificationToggle = $('#notification-toggle');
-        
+
         if (notificationToggle) {
             const isEnabled = this.userProfile.notificationsEnabled;
             notificationToggle.textContent = isEnabled ? '🔔 ON' : '🔔 OFF';
             notificationToggle.classList.toggle('active', isEnabled);
         }
-        
+
         // Se as notificações estão desabilitadas no perfil, 
         // não verificamos nem pedimos permissão do navegador
         if (!this.userProfile.notificationsEnabled) {
             console.log('📴 Notificações desabilitadas no perfil - não verificando permissão do navegador');
             return;
         }
-        
+
         // Só verifica permissão se o usuário tem notificações habilitadas no perfil
         if ('Notification' in window && this.userProfile.notificationsEnabled) {
             if (Notification.permission === 'denied') {
@@ -482,32 +482,32 @@ class AppManager {
             this.updateTimerDisplay('⏳ Carregando...', 'Aguardando dados...', '📡 Conectando com servidor...');
             return;
         }
-        
+
         const nextBoss = this.findNextBossWithServerTimes();
-        
+
         if (!nextBoss) {
             this.updateTimerDisplay('--:--:--', 'Nenhum boss encontrado', '📍 Verifique os dados...');
             return;
         }
-        
+
         const now = getSaoPauloDate();
         const timeToNext = nextBoss.timeToNext;
         const hours = Math.floor(timeToNext / 60);
         const minutes = timeToNext % 60;
         const seconds = 60 - now.getSeconds();
-        
+
         const timeDisplay = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         const bossName = `${nextBoss.nome.replace('<br>', ' ')}${nextBoss.subserver ? ` (${nextBoss.subserver})` : ''}`;
         const location = `📍 ${nextBoss.local}${nextBoss.spawnTime ? ` às ${nextBoss.spawnTime}` : ''}`;
-        
+
         this.updateTimerDisplay(timeDisplay, bossName, location);
-        
+
         // Adiciona classe de aviso se menos de 10 minutos
         const timerElement = $('#countdown-timer');
         if (timerElement) {
             timerElement.classList.toggle('warning-timer', timeToNext <= 10);
         }
-        
+
         // Notificações
         this.handleNotifications(nextBoss, timeToNext);
     }
@@ -519,7 +519,7 @@ class AppManager {
         const timerElement = $('#countdown-timer');
         const nameElement = $('#next-boss-name');
         const locationElement = $('#next-boss-location');
-        
+
         if (timerElement) timerElement.textContent = time;
         if (nameElement) nameElement.innerHTML = bossName;
         if (locationElement) locationElement.textContent = location;
@@ -530,36 +530,42 @@ class AppManager {
      */
     handleNotifications(nextBoss, timeToNext) {
         const bossKey = `${nextBoss.nome}-${nextBoss.nextHour}-${nextBoss.nextMinute || 0}`;
-        
+
         // Aviso antecipado (5 minutos)
         if (soundManager.earlyWarningEnabled && timeToNext === 5 && this.lastNotifiedBoss !== bossKey + '-early') {
             soundManager.playWarningSound();
             this.showNotification(
-                `⚠️ ${nextBoss.nome.replace('<br>', ' ')} aparecerá em 5 minutos!`,
+                `⚠️(${nextBoss.subserver}) - ${nextBoss.nome.replace('<br>', ' ')} aparecerá em 5 minutos!`,
                 `${nextBoss.local}${nextBoss.spawnTime ? ` às ${nextBoss.spawnTime}` : ''}`,
-                nextBoss.nome
+                nextBoss.nome,
+                nextBoss.img,
+                nextBoss.spaw
             );
             this.lastNotifiedBoss = bossKey + '-early';
         }
-        
+
         // Aviso final (1 minuto)
         if (soundManager.enabled && timeToNext === 1 && this.lastNotifiedBoss !== bossKey + '-final') {
             soundManager.playAlertSound();
             this.showNotification(
-                `🚨 ${nextBoss.nome.replace('<br>', ' ')} aparecerá em 1 minuto!`,
+                `🚨(${nextBoss.subserver}) ${nextBoss.nome.replace('<br>', ' ')} aparecerá em 1 minuto!`,
                 `${nextBoss.local}${nextBoss.spawnTime ? ` às ${nextBoss.spawnTime}` : ''}`,
-                nextBoss.nome
+                nextBoss.nome,
+                nextBoss.img,
+                nextBoss.spaw
             );
             this.lastNotifiedBoss = bossKey + '-final';
         }
-        
+
         // Boss nasceu
         if (timeToNext === 0 && this.lastNotifiedBoss !== bossKey + '-spawn') {
             soundManager.playAlertSound();
             this.showNotification(
-                `🐉 ${nextBoss.nome.replace('<br>', ' ')} apareceu agora!`,
+                `🐉(${nextBoss.subserver}) ${nextBoss.nome.replace('<br>', ' ')} apareceu agora!`,
                 `${nextBoss.local}${nextBoss.spawnTime ? ` às ${nextBoss.spawnTime}` : ''}`,
-                nextBoss.nome
+                nextBoss.nome,
+                nextBoss.img,
+                nextBoss.spaw
             );
             this.lastNotifiedBoss = bossKey + '-spawn';
         }
@@ -568,21 +574,21 @@ class AppManager {
     /**
      * Mostra notificação do sistema
      */
-    showNotification(title, body, bossName = null) {
+    showNotification(title, body, bossName = null, icon = null, badge = null) {
         if (!this.userProfile.notificationsEnabled) return;
-        
+
         const isFavoriteBoss = bossName && this.isFavorite(bossName);
-        
+
         if ('Notification' in window && Notification.permission === 'granted') {
             const notification = new Notification(title, {
                 body: body,
-                icon: 'img/bosses/miniaturas/mini_babel.webp',
-                badge: 'img/bosses/miniaturas/mini_valento.webp',
+                icon: icon || 'img/bosses/miniaturas/mini_babel.webp',
+                badge: badge || 'img/bosses/miniaturas/mini_valento.webp',
                 tag: `boss-${bossName}`,
                 requireInteraction: isFavoriteBoss,
                 vibrate: isFavoriteBoss ? [200, 100, 200] : [100, 50, 100]
             });
-            
+
             if (!isFavoriteBoss) {
                 setTimeout(() => notification.close(), 5000);
             }
@@ -596,32 +602,74 @@ class AppManager {
         if (!this.serverDataLoaded || !this.serverTimesData.length) {
             return null;
         }
-        
+
         const now = getSaoPauloDate();
         const currentHour = now.getHours();
         const currentMinute = now.getMinutes();
-        
-        let nextBoss = null;
-        let minTimeToNext = Infinity;
-        
+
+        let bossesNextHour = [];
+
         this.serverTimesData.forEach(serverData => {
             const subserverName = serverData.Idhas;
             const referenceMinute = parseInt(serverData.Horario);
-            
+
             BOSSES_DATA.forEach(boss => {
                 boss.horarios.forEach(hour => {
                     const spawnHour = hour;
                     const spawnMinute = referenceMinute;
                     const spawnTimeInMinutes = spawnHour * 60 + spawnMinute;
                     const currentTimeInMinutes = currentHour * 60 + currentMinute;
-                    
+
                     let timeToNext;
                     if (spawnTimeInMinutes > currentTimeInMinutes) {
                         timeToNext = spawnTimeInMinutes - currentTimeInMinutes;
                     } else {
                         timeToNext = (24 * 60) - currentTimeInMinutes + spawnTimeInMinutes;
                     }
-                    
+
+                    // Considera bosses que vão nascer na próxima hora
+                    if (timeToNext >= 0 && timeToNext < 60) {
+                        bossesNextHour.push({
+                            ...boss,
+                            nextHour: spawnHour,
+                            nextMinute: spawnMinute,
+                            subserver: subserverName,
+                            timeToNext: timeToNext,
+                            spawnTime: `${String(spawnHour).padStart(2, '0')}:${String(spawnMinute).padStart(2, '0')}`
+                        });
+                    }
+                });
+            });
+        });
+
+        // Se houver bosses na próxima hora, retorna o de maior lvl
+        if (bossesNextHour.length > 0) {
+            bossesNextHour.sort((a, b) => b.lvl - a.lvl); // Maior lvl primeiro
+            return bossesNextHour[0];
+        }
+
+        // Se não houver, retorna o mais próximo como fallback (como era antes)
+        let nextBoss = null;
+        let minTimeToNext = Infinity;
+
+        this.serverTimesData.forEach(serverData => {
+            const subserverName = serverData.Idhas;
+            const referenceMinute = parseInt(serverData.Horario);
+
+            BOSSES_DATA.forEach(boss => {
+                boss.horarios.forEach(hour => {
+                    const spawnHour = hour;
+                    const spawnMinute = referenceMinute;
+                    const spawnTimeInMinutes = spawnHour * 60 + spawnMinute;
+                    const currentTimeInMinutes = currentHour * 60 + currentMinute;
+
+                    let timeToNext;
+                    if (spawnTimeInMinutes > currentTimeInMinutes) {
+                        timeToNext = spawnTimeInMinutes - currentTimeInMinutes;
+                    } else {
+                        timeToNext = (24 * 60) - currentTimeInMinutes + spawnTimeInMinutes;
+                    }
+
                     if (timeToNext < minTimeToNext) {
                         minTimeToNext = timeToNext;
                         nextBoss = {
@@ -636,7 +684,7 @@ class AppManager {
                 });
             });
         });
-        
+
         return nextBoss;
     }
 
@@ -659,7 +707,7 @@ class AppManager {
         const now = getSaoPauloDate();
         const currentHour = now.getHours();
         const sortedHorarios = horarios.slice().sort((a, b) => a - b);
-        
+
         for (const horario of sortedHorarios) {
             if (horario >= currentHour) {
                 return horario;
@@ -685,21 +733,21 @@ class AppManager {
         // Remove active de todas as abas
         document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-        
+
         // Adiciona active na aba clicada
         const activeTab = document.querySelector(`[data-tab="${tabName}"]`);
         if (activeTab) {
             activeTab.classList.add('active');
         } else {
         }
-        
+
         // Mostra conteúdo correspondente
         const content = document.getElementById(tabName + '-content');
         if (content) {
             content.classList.add('active');
         } else {
         }
-        
+
         // Se mudou para bosses, atualiza dados
         if (tabName === 'bosses') {
             this.fetchServerTimes();
@@ -725,18 +773,18 @@ class AppManager {
         const minRange = parseInt($('#min-range')?.value || 1);
         const maxRange = parseInt($('#max-range')?.value || 100);
         const allowRepeats = $('#allow-repeats')?.checked || false;
-        
+
         // Validação
         if (quantity < 1 || quantity > 100) {
             alert('Quantidade deve ser entre 1 e 100');
             return;
         }
-        
+
         if (minRange >= maxRange) {
             alert('O valor mínimo deve ser menor que o máximo');
             return;
         }
-        
+
         try {
             const results = this.generateNumbers(quantity, minRange, maxRange, allowRepeats);
             this.displayLotteryResults(results);
@@ -748,23 +796,23 @@ class AppManager {
     generateNumbers(count, min, max, allowRepeats) {
         const numbers = [];
         const range = max - min + 1;
-        
+
         if (!allowRepeats && count > range) {
             throw new Error(`Não é possível sortear ${count} números únicos entre ${min} e ${max}`);
         }
-        
+
         if (allowRepeats) {
             for (let i = 0; i < count; i++) {
                 numbers.push(Math.floor(Math.random() * range) + min);
             }
         } else {
-            const available = Array.from({length: range}, (_, i) => min + i);
+            const available = Array.from({ length: range }, (_, i) => min + i);
             for (let i = 0; i < count; i++) {
                 const randomIndex = Math.floor(Math.random() * available.length);
                 numbers.push(available.splice(randomIndex, 1)[0]);
             }
         }
-        
+
         return numbers;
     }
 
@@ -772,14 +820,14 @@ class AppManager {
         const resultsDiv = $('#lottery-results');
         const display = $('#results-display');
         const timeSpan = $('#draw-time');
-        
+
         if (!resultsDiv || !display || !timeSpan) return;
-        
+
         const sortResults = $('#sort-results')?.checked || false;
         const finalNumbers = sortResults ? [...numbers].sort((a, b) => a - b) : numbers;
-        
+
         display.innerHTML = '';
-        
+
         finalNumbers.forEach((number, index) => {
             setTimeout(() => {
                 const numberDiv = document.createElement('div');
@@ -788,10 +836,10 @@ class AppManager {
                 display.appendChild(numberDiv);
             }, index * 100);
         });
-        
+
         timeSpan.textContent = getSaoPauloDate().toLocaleString('pt-BR');
         resultsDiv.style.display = 'block';
-        
+
         // Scroll para resultados
         resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
@@ -813,7 +861,7 @@ class AppManager {
         const banner = $('#pwa-banner');
         if (banner) {
             banner.style.display = 'block';
-            
+
             const installBtn = $('#pwa-install-btn');
             if (installBtn) {
                 installBtn.addEventListener('click', () => this.installPWA());
@@ -824,10 +872,10 @@ class AppManager {
     installPWA() {
         const banner = $('#pwa-banner');
         if (banner) banner.style.display = 'none';
-        
+
         if (this.deferredPrompt) {
             this.deferredPrompt.prompt();
-            
+
             this.deferredPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
                     console.log('📱 PWA instalado');
@@ -843,9 +891,9 @@ class AppManager {
     handleScroll() {
         const timerSection = $('#timer-section');
         if (!timerSection || timerSection.classList.contains('no-scroll-fade')) return;
-        
+
         timerSection.classList.add('scrolling');
-        
+
         clearTimeout(this.scrollTimeout);
         this.scrollTimeout = setTimeout(() => {
             timerSection.classList.remove('scrolling');
@@ -927,7 +975,7 @@ window.timerManager = {
     toggleScrollFade: () => {
         const timerSection = $('#timer-section');
         const pinToggle = $('#pin-toggle');
-        
+
         if (timerSection && pinToggle) {
             const isDisabled = timerSection.classList.contains('no-scroll-fade');
             timerSection.classList.toggle('no-scroll-fade');
@@ -956,7 +1004,7 @@ window.notificationManager = {
                 if (Notification.permission === 'default') {
                     console.log('🔔 Solicitando permissão de notificação...');
                     const permission = await Notification.requestPermission();
-                    
+
                     if (permission === 'granted') {
                         app.userProfile.notificationsEnabled = true;
                         new Notification('✅ Notificações Habilitadas!', {
@@ -984,7 +1032,7 @@ window.notificationManager = {
                 console.log('❌ Navegador não suporta notificações');
             }
         }
-        
+
         app.updateProfileDisplay();
         app.saveProfile();
     },
@@ -1004,7 +1052,7 @@ window.lotteryManager = {
     toggleOptions: () => {
         const options = $('#lottery-options');
         const arrow = $('.options-toggle .arrow');
-        
+
         if (options && arrow) {
             if (options.style.display === 'none') {
                 options.style.display = 'block';
@@ -1020,7 +1068,7 @@ window.lotteryManager = {
         if (display) {
             const numbers = Array.from(display.children).map(el => el.textContent);
             const text = `Números sorteados: ${numbers.join(', ')}\nData: ${getSaoPauloDate().toLocaleString('pt-BR')}`;
-            
+
             navigator.clipboard.writeText(text).then(() => {
                 const btn = event.target;
                 const originalText = btn.textContent;
@@ -1032,12 +1080,12 @@ window.lotteryManager = {
     newDraw: () => {
         const results = $('#lottery-results');
         if (results) results.style.display = 'none';
-        
+
         // Reset form
         const quantity = $('#quantity');
         const minRange = $('#min-range');
         const maxRange = $('#max-range');
-        
+
         if (quantity) quantity.value = 1;
         if (minRange) minRange.value = 1;
         if (maxRange) maxRange.value = 100;
