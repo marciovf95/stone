@@ -339,64 +339,69 @@
         <button class="help-close" onclick="closeHelpModal()">✕</button>
         <h3>❓ Guia dos Controles de Notificação</h3>
         
+
         <div class="help-section">
             <h4>🔊 Som</h4>
-            <p><strong>O que faz:</strong> Toca um áudio no navegador quando o boss está chegando</p>
-            <p><strong>Quando toca:</strong> 1 minuto antes e quando o boss nasce</p>
-            <p><strong>Requisito:</strong> Você precisa estar com a aba aberta para ouvir</p>
+            <p><strong>O que faz:</strong> Toca um áudio no navegador quando o boss está chegando.</p>
+            <p><strong>Quando toca:</strong> 1 minuto antes e no exato momento em que o boss nasce.</p>
+            <p><strong>Requisito:</strong> Você precisa estar com a aba aberta para ouvir o som.</p>
         </div>
 
         <div class="help-section">
             <h4>⚠️ Aviso</h4>
-            <p><strong>O que faz:</strong> Ativa um alerta antecipado de 5 minutos</p>
-            <p><strong>Quando dispara:</strong> 5 minutos antes do boss aparecer</p>
-            <p><strong>Som especial:</strong> Toca um som tipo "chime" (diferente do som normal)</p>
-            <p><strong>Combinado com:</strong> Também envia notificação visual (se habilitada)</p>
+            <p><strong>O que faz:</strong> Ativa um alerta antecipado de 5 minutos antes do boss nascer.</p>
+            <p><strong>Quando dispara:</strong> 5 minutos antes do boss aparecer.</p>
+            <p><strong>Som especial:</strong> Toca um som tipo "chime" (diferente do som normal).</p>
+            <p><strong>Combinado com:</strong> Também envia notificação visual (se "Notif" estiver ativado).</p>
         </div>
 
         <div class="help-section">
             <h4>🔔 Notif</h4>
-            <p><strong>O que faz:</strong> Mostra notificação visual do sistema operacional</p>
-            <p><strong>Funciona:</strong> Mesmo quando você está em outra aba ou aplicativo</p>
-            <p><strong>Aparece:</strong> Na área de notificações do Windows/Mac/Linux</p>
-            <p><strong>Persistência:</strong> Bosses favoritos ficam até você fechar, outros somem em 5s</p>
+            <p><strong>O que faz:</strong> Mostra notificação visual do sistema operacional (Windows/Mac/Linux).</p>
+            <p><strong>Funciona:</strong> Mesmo quando você está em outra aba ou aplicativo.</p>
+            <p><strong>Permissão:</strong> É necessário permitir notificações no navegador.</p>
+        </div>
+
+        <div class="help-section">
+            <h4>⭐ Notificar apenas bosses favoritos</h4>
+            <p><strong>O que faz:</strong> Se ativado, você só recebe notificações dos bosses que você favoritou (estrela amarela na lista de bosses).</p>
+            <p><strong>Se desativado:</strong> Você recebe notificações de todos os bosses normalmente.</p>
+            <p><strong>Persistência:</strong> Sua escolha é salva no perfil e mantida ao recarregar a página.</p>
         </div>
 
         <div class="help-section">
             <h4>🎵 Tipo</h4>
-            <p><strong>O que faz:</strong> Escolhe o estilo de som que será tocado</p>
-            <p><strong>Opções:</strong> Beep, Chime, Alert, Bell, Horn, Whistle</p>
+            <p><strong>O que faz:</strong> Escolhe o estilo de som que será tocado.</p>
+            <p><strong>Opções:</strong> Beep, Chime, Alert, Bell, Horn, Whistle.</p>
         </div>
 
         <div class="help-section">
             <h4>🔊 Vol</h4>
-            <p><strong>O que faz:</strong> Controla o volume do som (0% a 100%)</p>
+            <p><strong>O que faz:</strong> Controla o volume do som (0% a 100%).</p>
         </div>
 
         <div class="help-timeline">
             <h4 style="color: var(--text-accent); text-align: center; margin-bottom: 15px;">📅 Timeline de Notificações</h4>
-            
             <div class="help-timeline-item">
                 <span class="help-timeline-icon">⚠️</span>
                 <div>
-                    <strong>5 minutos antes</strong> (SE "Aviso" = ON)<br>
-                    🔊 Som: Chime + 🔔 Notificação visual
+                    <strong>5 minutos antes</strong> (se "Aviso" = ON)<br>
+                    🔊 Som: Chime + 🔔 Notificação visual (se "Notif" = ON e dentro das regras de favoritos)
                 </div>
             </div>
-            
             <div class="help-timeline-item">
                 <span class="help-timeline-icon">🚨</span>
                 <div>
-                    <strong>1 minuto antes</strong> (SE "Som" = ON)<br>
-                    🔊 Som: Alert + 🔔 Notificação visual
+                    <strong>1 minuto antes</strong> (se "Som" = ON)<br>
+                    🔊 Som: Alert + 🔔 Notificação visual (se "Notif" = ON e dentro das regras de favoritos)
                 </div>
             </div>
-            
             <div class="help-timeline-item">
                 <span class="help-timeline-icon">🐉</span>
                 <div>
-                    <strong>Boss nasce</strong> (SE "Som" = ON)<br>
-                    🔊 Som: Alert + 🔔 Notificação visual
+                    <strong>Boss nasce</strong> (se "Som" = ON)<br>
+                    🔊 Som: Alert + 🔔 Notificação visual (se "Notif" = ON e dentro das regras de favoritos)<br>
+                    <em>Agora a notificação é garantida mesmo se houver pequeno atraso no relógio do navegador.</em>
                 </div>
             </div>
         </div>
