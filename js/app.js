@@ -11,7 +11,7 @@ class AppManager {
     constructor() {
         this.serverTimesData = [];
         this.serverDataLoaded = false;
-        this.lastNotifiedBoss = null;
+    this.lastNotifiedBosses = {}; // Armazena status de notificação por bossKey
         this.userProfile = null;
     this.showOnlyFavorites = false;
     this.notifyOnlyFavorites = false;
@@ -552,7 +552,12 @@ class AppManager {
      * Gerencia notificações
      */
     handleNotifications(nextBoss, timeToNext) {
-        const bossKey = `${nextBoss.nome}-${nextBoss.nextHour}-${nextBoss.nextMinute || 0}`;
+
+    const bossKey = `${nextBoss.nome}-${nextBoss.nextHour}-${nextBoss.nextMinute || 0}`;
+    if (!this.lastNotifiedBosses) this.lastNotifiedBosses = {};
+    if (!this.lastNotifiedBosses[bossKey]) this.lastNotifiedBosses[bossKey] = {};
+    // Debug: logs para depuração
+    console.log('[NOTIFY] timeToNext:', timeToNext, 'lastNotifiedBosses:', this.lastNotifiedBosses[bossKey], 'bossKey:', bossKey);
 
         // Se ativado, só notifica bosses favoritos
         if (this.notifyOnlyFavorites && !this.isFavorite(nextBoss.nome)) {
@@ -560,7 +565,7 @@ class AppManager {
         }
 
         // Aviso antecipado (5 minutos)
-        if (soundManager.earlyWarningEnabled && timeToNext === 5 && this.lastNotifiedBoss !== bossKey + '-early') {
+        if (soundManager.earlyWarningEnabled && timeToNext === 5 && !this.lastNotifiedBosses[bossKey].early) {
             soundManager.playWarningSound();
             this.showNotification(
                 `⚠️(${nextBoss.subserver}) - ${nextBoss.nome.replace('<br>', ' ')} aparecerá em 5 minutos!`,
@@ -569,11 +574,11 @@ class AppManager {
                 nextBoss.img,
                 nextBoss.spaw
             );
-            this.lastNotifiedBoss = bossKey + '-early';
+            this.lastNotifiedBosses[bossKey].early = true;
         }
 
         // Aviso final (1 minuto)
-        if (soundManager.enabled && timeToNext === 1 && this.lastNotifiedBoss !== bossKey + '-final') {
+        if (soundManager.enabled && timeToNext === 1 && !this.lastNotifiedBosses[bossKey].final) {
             soundManager.playAlertSound();
             this.showNotification(
                 `🚨(${nextBoss.subserver}) ${nextBoss.nome.replace('<br>', ' ')} aparecerá em 1 minuto!`,
@@ -582,11 +587,12 @@ class AppManager {
                 nextBoss.img,
                 nextBoss.spaw
             );
-            this.lastNotifiedBoss = bossKey + '-final';
+            this.lastNotifiedBosses[bossKey].final = true;
         }
 
-        // Boss nasceu (garante notificação mesmo se timeToNext < 0 por atraso de execução)
-        if (timeToNext <= 0 && this.lastNotifiedBoss !== bossKey + '-spawn') {
+        // Boss nasceu (garante notificação mesmo se timeToNext <= 0 por atraso de execução)
+        if (timeToNext <= 0 && !this.lastNotifiedBosses[bossKey].spawn) {
+            console.log('[NOTIFY] Boss nasceu! timeToNext:', timeToNext, 'bossKey:', bossKey);
             soundManager.playAlertSound();
             this.showNotification(
                 `🐉(${nextBoss.subserver}) ${nextBoss.nome.replace('<br>', ' ')} apareceu agora!`,
@@ -595,8 +601,17 @@ class AppManager {
                 nextBoss.img,
                 nextBoss.spaw
             );
-            this.lastNotifiedBoss = bossKey + '-spawn';
+            this.lastNotifiedBosses[bossKey].spawn = true;
         }
+
+        // Limpa notificações antigas para não crescer indefinidamente
+        const now = Date.now();
+        Object.keys(this.lastNotifiedBosses).forEach(key => {
+            if (key !== bossKey) {
+                // Remove notificações antigas se não for o boss atual
+                delete this.lastNotifiedBosses[key];
+            }
+        });
     }
 
     // Alterna notificação só favoritos
