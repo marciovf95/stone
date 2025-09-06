@@ -197,14 +197,14 @@ export const BOSSES_DATA = [
     {
         nome: "Guardião de Elite <br>(Evento)", 
         local: "Mais Frequentado Santuário do Abismo (AB1)<br><b>Outros Lugares:</b> AB3, Arma, Lab, Mina, Lost1, Ice2", 
-        horarios: [11,21],
+        horarios: [11,22],
         drop: ["+531.925.821.428 de Experiência "],
         dano1: ["Não tem roleta"], 
         dano2: ["Abaixo de 360 de dano Não tem roleta acima +531.925.821.428 de Experiência "], 
         dano3: ["+531.925.821.428 de Experiência"],
         img: "img/bosses/miniaturas/mini_guardiao_elite.webp",
         spaw : "img/bosses/maps/abismo-do-mar-oposto.png",
-        lvl : 20
+        lvl : 200
     }
 ];
 
