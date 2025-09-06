@@ -12,6 +12,8 @@ class AppManager {
         this.serverTimesData = [];
         this.serverDataLoaded = false;
     this.lastNotifiedBosses = {}; // Armazena status de notificação por bossKey
+    this._lastBossKey = null;
+    this._lastBossTimeToNext = null;
         this.userProfile = null;
     this.showOnlyFavorites = false;
     this.notifyOnlyFavorites = false;
@@ -510,6 +512,8 @@ class AppManager {
 
         if (!nextBoss) {
             this.updateTimerDisplay('--:--:--', 'Nenhum boss encontrado', '📍 Verifique os dados...');
+            this._lastBossKey = null;
+            this._lastBossTimeToNext = null;
             return;
         }
 
@@ -531,8 +535,53 @@ class AppManager {
             timerElement.classList.toggle('warning-timer', timeToNext <= 10);
         }
 
-        // Notificações
+        // --- Notificação de nascimento do boss anterior se mudou ---
+        const bossKey = `${nextBoss.nome}-${nextBoss.nextHour}-${nextBoss.nextMinute || 0}`;
+        if (this._lastBossKey && this._lastBossKey !== bossKey && this._lastBossTimeToNext !== null) {
+            // Se o boss anterior estava para nascer (timeToNext 1 ou 0 ou negativo), notifica spawn dele
+            if (this._lastBossTimeToNext <= 1) {
+                // Extrai dados do boss anterior do dicionário de notificações
+                if (!this.lastNotifiedBosses[this._lastBossKey]) this.lastNotifiedBosses[this._lastBossKey] = {};
+                if (!this.lastNotifiedBosses[this._lastBossKey].spawn) {
+                    // Extrai nome, subserver, etc do bossKey
+                    const [nome, nextHour, nextMinute] = this._lastBossKey.split('-');
+                    // Busca boss e subserver
+                    let bossObj = null, subserver = '', spawnTime = '';
+                    for (const s of this.serverTimesData) {
+                        if (parseInt(s.Horario) == nextMinute) {
+                            subserver = s.Idhas;
+                            break;
+                        }
+                    }
+                    for (const b of BOSSES_DATA) {
+                        if (b.nome === nome && b.horarios.includes(Number(nextHour))) {
+                            bossObj = b;
+                            break;
+                        }
+                    }
+                    if (bossObj) {
+                        spawnTime = `${String(nextHour).padStart(2, '0')}:${String(nextMinute).padStart(2, '0')}`;
+                        console.log('[NOTIFY][RECOVERY] Boss anterior nasceu! bossKey:', this._lastBossKey);
+                        soundManager.playAlertSound();
+                        this.showNotification(
+                            `🐉(${subserver}) ${bossObj.nome.replace('<br>', ' ')} apareceu agora!`,
+                            `${bossObj.local}${spawnTime ? ` às ${spawnTime}` : ''}`,
+                            bossObj.nome,
+                            bossObj.img,
+                            bossObj.spaw
+                        );
+                        this.lastNotifiedBosses[this._lastBossKey].spawn = true;
+                    }
+                }
+            }
+        }
+
+        // Notificações do boss atual
         this.handleNotifications(nextBoss, timeToNext);
+
+        // Atualiza bossKey e timeToNext para o próximo ciclo
+        this._lastBossKey = bossKey;
+        this._lastBossTimeToNext = timeToNext;
     }
 
     /**
@@ -557,7 +606,7 @@ class AppManager {
     if (!this.lastNotifiedBosses) this.lastNotifiedBosses = {};
     if (!this.lastNotifiedBosses[bossKey]) this.lastNotifiedBosses[bossKey] = {};
     // Debug: logs para depuração
-    console.log('[NOTIFY] timeToNext:', timeToNext, 'lastNotifiedBosses:', this.lastNotifiedBosses[bossKey], 'bossKey:', bossKey);
+    //console.log('[NOTIFY] timeToNext:', timeToNext, 'lastNotifiedBosses:', this.lastNotifiedBosses[bossKey], 'bossKey:', bossKey);
 
         // Se ativado, só notifica bosses favoritos
         if (this.notifyOnlyFavorites && !this.isFavorite(nextBoss.nome)) {
