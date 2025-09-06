@@ -11,9 +11,10 @@ class AppManager {
     constructor() {
         this.serverTimesData = [];
         this.serverDataLoaded = false;
-        this.lastNotifiedBoss = null;
+    this.lastNotifiedBosses = {}; // Armazena status de notificação por bossKey
         this.userProfile = null;
-        this.showOnlyFavorites = false;
+    this.showOnlyFavorites = false;
+    this.notifyOnlyFavorites = false;
 
         // this.initializeApp(); // Inicialização movida para main.js
     }
@@ -67,13 +68,20 @@ class AppManager {
 
         // Salva perfil atualizado
         this.saveProfile();
+
+        // Carrega opção de notificação apenas favoritos
+        if (typeof this.userProfile.notifyOnlyFavorites === 'undefined') {
+            this.userProfile.notifyOnlyFavorites = false;
+        }
+        this.notifyOnlyFavorites = this.userProfile.notifyOnlyFavorites;
     }
 
     /**
      * Salva perfil do usuário
      */
     saveProfile() {
-        storageManager.saveProfile(this.userProfile);
+    this.userProfile.notifyOnlyFavorites = this.notifyOnlyFavorites;
+    storageManager.saveProfile(this.userProfile);
     }
 
     /**
@@ -314,11 +322,14 @@ class AppManager {
         const card = document.createElement('div');
         card.className = 'boss-card';
 
-        // Estrela de favorito
+        // Estrela de favorito (SVG para cor customizada)
         const favoriteStar = document.createElement('div');
-        favoriteStar.className = `favorite-star ${this.isFavorite(boss.nome) ? 'favorited' : ''}`;
-        favoriteStar.innerHTML = '⭐';
-        favoriteStar.title = this.isFavorite(boss.nome) ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
+        favoriteStar.className = 'favorite-star';
+        const isFav = this.isFavorite(boss.nome);
+        favoriteStar.innerHTML = isFav
+            ? `<svg width="24" height="24" viewBox="0 0 24 24" fill="#FFD700" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z"/></svg>`
+            : `<svg width="24" height="24" viewBox="0 0 24 24" fill="#666" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z"/></svg>`;
+        favoriteStar.title = isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
         favoriteStar.onclick = (e) => {
             e.stopPropagation();
             this.toggleFavorite(boss.nome);
@@ -441,6 +452,12 @@ class AppManager {
 
         // Atualiza UI das notificações
         this.updateNotificationUI();
+
+        // Atualiza UI do toggle de notificação só favoritos
+        const notifyFavToggle = $('#notify-favorites-toggle');
+        if (notifyFavToggle) {
+            notifyFavToggle.checked = this.notifyOnlyFavorites;
+        }
     }
 
     /**
@@ -453,6 +470,12 @@ class AppManager {
             const isEnabled = this.userProfile.notificationsEnabled;
             notificationToggle.textContent = isEnabled ? '🔔 ON' : '🔔 OFF';
             notificationToggle.classList.toggle('active', isEnabled);
+        }
+
+        // Atualiza UI do toggle de notificação só favoritos
+        const notifyFavToggle = $('#notify-favorites-toggle');
+        if (notifyFavToggle) {
+            notifyFavToggle.checked = this.notifyOnlyFavorites;
         }
 
         // Se as notificações estão desabilitadas no perfil, 
@@ -529,10 +552,20 @@ class AppManager {
      * Gerencia notificações
      */
     handleNotifications(nextBoss, timeToNext) {
-        const bossKey = `${nextBoss.nome}-${nextBoss.nextHour}-${nextBoss.nextMinute || 0}`;
+
+    const bossKey = `${nextBoss.nome}-${nextBoss.nextHour}-${nextBoss.nextMinute || 0}`;
+    if (!this.lastNotifiedBosses) this.lastNotifiedBosses = {};
+    if (!this.lastNotifiedBosses[bossKey]) this.lastNotifiedBosses[bossKey] = {};
+    // Debug: logs para depuração
+    console.log('[NOTIFY] timeToNext:', timeToNext, 'lastNotifiedBosses:', this.lastNotifiedBosses[bossKey], 'bossKey:', bossKey);
+
+        // Se ativado, só notifica bosses favoritos
+        if (this.notifyOnlyFavorites && !this.isFavorite(nextBoss.nome)) {
+            return;
+        }
 
         // Aviso antecipado (5 minutos)
-        if (soundManager.earlyWarningEnabled && timeToNext === 5 && this.lastNotifiedBoss !== bossKey + '-early') {
+        if (soundManager.earlyWarningEnabled && timeToNext === 5 && !this.lastNotifiedBosses[bossKey].early) {
             soundManager.playWarningSound();
             this.showNotification(
                 `⚠️(${nextBoss.subserver}) - ${nextBoss.nome.replace('<br>', ' ')} aparecerá em 5 minutos!`,
@@ -541,11 +574,11 @@ class AppManager {
                 nextBoss.img,
                 nextBoss.spaw
             );
-            this.lastNotifiedBoss = bossKey + '-early';
+            this.lastNotifiedBosses[bossKey].early = true;
         }
 
         // Aviso final (1 minuto)
-        if (soundManager.enabled && timeToNext === 1 && this.lastNotifiedBoss !== bossKey + '-final') {
+        if (soundManager.enabled && timeToNext === 1 && !this.lastNotifiedBosses[bossKey].final) {
             soundManager.playAlertSound();
             this.showNotification(
                 `🚨(${nextBoss.subserver}) ${nextBoss.nome.replace('<br>', ' ')} aparecerá em 1 minuto!`,
@@ -554,11 +587,12 @@ class AppManager {
                 nextBoss.img,
                 nextBoss.spaw
             );
-            this.lastNotifiedBoss = bossKey + '-final';
+            this.lastNotifiedBosses[bossKey].final = true;
         }
 
-        // Boss nasceu
-        if (timeToNext === 0 && this.lastNotifiedBoss !== bossKey + '-spawn') {
+        // Boss nasceu (garante notificação mesmo se timeToNext <= 0 por atraso de execução)
+        if (timeToNext <= 0 && !this.lastNotifiedBosses[bossKey].spawn) {
+            console.log('[NOTIFY] Boss nasceu! timeToNext:', timeToNext, 'bossKey:', bossKey);
             soundManager.playAlertSound();
             this.showNotification(
                 `🐉(${nextBoss.subserver}) ${nextBoss.nome.replace('<br>', ' ')} apareceu agora!`,
@@ -567,8 +601,25 @@ class AppManager {
                 nextBoss.img,
                 nextBoss.spaw
             );
-            this.lastNotifiedBoss = bossKey + '-spawn';
+            this.lastNotifiedBosses[bossKey].spawn = true;
         }
+
+        // Limpa notificações antigas para não crescer indefinidamente
+        const now = Date.now();
+        Object.keys(this.lastNotifiedBosses).forEach(key => {
+            if (key !== bossKey) {
+                // Remove notificações antigas se não for o boss atual
+                delete this.lastNotifiedBosses[key];
+            }
+        });
+    }
+
+    // Alterna notificação só favoritos
+    toggleNotifyOnlyFavorites() {
+        this.notifyOnlyFavorites = !this.notifyOnlyFavorites;
+        this.userProfile.notifyOnlyFavorites = this.notifyOnlyFavorites;
+        this.saveProfile();
+        this.updateProfileDisplay();
     }
 
     /**
@@ -588,10 +639,11 @@ class AppManager {
                 requireInteraction: isFavoriteBoss,
                 vibrate: isFavoriteBoss ? [200, 100, 200] : [100, 50, 100]
             });
-
-            if (!isFavoriteBoss) {
-                setTimeout(() => notification.close(), 5000);
-            }
+            setTimeout(() => notification.close(), 5000);
+            // Algumas Pessoas reclamam do fechamento obrigatório quando é favorito
+            // if (!isFavoriteBoss) {
+            //     setTimeout(() => notification.close(), 5000);
+            // }
         }
     }
 
@@ -1104,6 +1156,7 @@ window.changeSoundType = () => soundManager.changeSoundType();
 window.toggleEarlyWarning = () => soundManager.toggleEarlyWarning();
 window.updateVolume = () => soundManager.updateVolume();
 window.toggleNotifications = () => window.notificationManager.toggleNotifications();
+window.toggleNotifyOnlyFavorites = () => app.toggleNotifyOnlyFavorites();
 window.toggleLotteryOptions = () => window.lotteryManager.toggleOptions();
 window.copyResults = () => window.lotteryManager.copyResults();
 window.newDraw = () => window.lotteryManager.newDraw();
