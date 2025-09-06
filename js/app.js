@@ -13,7 +13,8 @@ class AppManager {
         this.serverDataLoaded = false;
         this.lastNotifiedBoss = null;
         this.userProfile = null;
-        this.showOnlyFavorites = false;
+    this.showOnlyFavorites = false;
+    this.notifyOnlyFavorites = false;
 
         // this.initializeApp(); // Inicialização movida para main.js
     }
@@ -67,13 +68,20 @@ class AppManager {
 
         // Salva perfil atualizado
         this.saveProfile();
+
+        // Carrega opção de notificação apenas favoritos
+        if (typeof this.userProfile.notifyOnlyFavorites === 'undefined') {
+            this.userProfile.notifyOnlyFavorites = false;
+        }
+        this.notifyOnlyFavorites = this.userProfile.notifyOnlyFavorites;
     }
 
     /**
      * Salva perfil do usuário
      */
     saveProfile() {
-        storageManager.saveProfile(this.userProfile);
+    this.userProfile.notifyOnlyFavorites = this.notifyOnlyFavorites;
+    storageManager.saveProfile(this.userProfile);
     }
 
     /**
@@ -314,11 +322,14 @@ class AppManager {
         const card = document.createElement('div');
         card.className = 'boss-card';
 
-        // Estrela de favorito
+        // Estrela de favorito (SVG para cor customizada)
         const favoriteStar = document.createElement('div');
-        favoriteStar.className = `favorite-star ${this.isFavorite(boss.nome) ? 'favorited' : ''}`;
-        favoriteStar.innerHTML = '⭐';
-        favoriteStar.title = this.isFavorite(boss.nome) ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
+        favoriteStar.className = 'favorite-star';
+        const isFav = this.isFavorite(boss.nome);
+        favoriteStar.innerHTML = isFav
+            ? `<svg width="24" height="24" viewBox="0 0 24 24" fill="#FFD700" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z"/></svg>`
+            : `<svg width="24" height="24" viewBox="0 0 24 24" fill="#666" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z"/></svg>`;
+        favoriteStar.title = isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
         favoriteStar.onclick = (e) => {
             e.stopPropagation();
             this.toggleFavorite(boss.nome);
@@ -441,6 +452,12 @@ class AppManager {
 
         // Atualiza UI das notificações
         this.updateNotificationUI();
+
+        // Atualiza UI do toggle de notificação só favoritos
+        const notifyFavToggle = $('#notify-favorites-toggle');
+        if (notifyFavToggle) {
+            notifyFavToggle.checked = this.notifyOnlyFavorites;
+        }
     }
 
     /**
@@ -453,6 +470,12 @@ class AppManager {
             const isEnabled = this.userProfile.notificationsEnabled;
             notificationToggle.textContent = isEnabled ? '🔔 ON' : '🔔 OFF';
             notificationToggle.classList.toggle('active', isEnabled);
+        }
+
+        // Atualiza UI do toggle de notificação só favoritos
+        const notifyFavToggle = $('#notify-favorites-toggle');
+        if (notifyFavToggle) {
+            notifyFavToggle.checked = this.notifyOnlyFavorites;
         }
 
         // Se as notificações estão desabilitadas no perfil, 
@@ -531,6 +554,11 @@ class AppManager {
     handleNotifications(nextBoss, timeToNext) {
         const bossKey = `${nextBoss.nome}-${nextBoss.nextHour}-${nextBoss.nextMinute || 0}`;
 
+        // Se ativado, só notifica bosses favoritos
+        if (this.notifyOnlyFavorites && !this.isFavorite(nextBoss.nome)) {
+            return;
+        }
+
         // Aviso antecipado (5 minutos)
         if (soundManager.earlyWarningEnabled && timeToNext === 5 && this.lastNotifiedBoss !== bossKey + '-early') {
             soundManager.playWarningSound();
@@ -569,6 +597,14 @@ class AppManager {
             );
             this.lastNotifiedBoss = bossKey + '-spawn';
         }
+    }
+
+    // Alterna notificação só favoritos
+    toggleNotifyOnlyFavorites() {
+        this.notifyOnlyFavorites = !this.notifyOnlyFavorites;
+        this.userProfile.notifyOnlyFavorites = this.notifyOnlyFavorites;
+        this.saveProfile();
+        this.updateProfileDisplay();
     }
 
     /**
@@ -1104,6 +1140,7 @@ window.changeSoundType = () => soundManager.changeSoundType();
 window.toggleEarlyWarning = () => soundManager.toggleEarlyWarning();
 window.updateVolume = () => soundManager.updateVolume();
 window.toggleNotifications = () => window.notificationManager.toggleNotifications();
+window.toggleNotifyOnlyFavorites = () => app.toggleNotifyOnlyFavorites();
 window.toggleLotteryOptions = () => window.lotteryManager.toggleOptions();
 window.copyResults = () => window.lotteryManager.copyResults();
 window.newDraw = () => window.lotteryManager.newDraw();
