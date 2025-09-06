@@ -585,8 +585,8 @@ class AppManager {
             this.lastNotifiedBoss = bossKey + '-final';
         }
 
-        // Boss nasceu
-        if (timeToNext === 0 && this.lastNotifiedBoss !== bossKey + '-spawn') {
+        // Boss nasceu (garante notificação mesmo se timeToNext < 0 por atraso de execução)
+        if (timeToNext <= 0 && this.lastNotifiedBoss !== bossKey + '-spawn') {
             soundManager.playAlertSound();
             this.showNotification(
                 `🐉(${nextBoss.subserver}) ${nextBoss.nome.replace('<br>', ' ')} apareceu agora!`,
@@ -624,10 +624,11 @@ class AppManager {
                 requireInteraction: isFavoriteBoss,
                 vibrate: isFavoriteBoss ? [200, 100, 200] : [100, 50, 100]
             });
-
-            if (!isFavoriteBoss) {
-                setTimeout(() => notification.close(), 5000);
-            }
+            setTimeout(() => notification.close(), 5000);
+            // Algumas Pessoas reclamam do fechamento obrigatório quando é favorito
+            // if (!isFavoriteBoss) {
+            //     setTimeout(() => notification.close(), 5000);
+            // }
         }
     }
 
