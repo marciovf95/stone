@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Timer Section</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #121212;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+            height: 200vh; /* Para testar scroll */
+        }
+        
+        .test-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Timer Section - Estilo limpo */
+        .timer-section {
+            position: fixed !important;
+            top: 20px !important;
+            right: 20px !important;
+            width: 200px !important;
+            background-color: rgba(30, 30, 30, 0.95) !important;
+            border: 2px solid #4CAF50 !important;
+            border-radius: 8px !important;
+            padding: 15px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+            backdrop-filter: blur(5px) !important;
+            z-index: 1000 !important;
+        }
+        
+        .timer-section h3 {
+            color: #4CAF50;
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+            text-align: center;
+        }
+        
+        .countdown-timer {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #FFD700;
+            margin: 5px 0;
+            text-align: center;
+        }
+        
+        .test-box {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-content">
+        <h1>🧪 Teste do Timer Section</h1>
+        
+        <div class="test-box">
+            <h2>Instruções:</h2>
+            <p>1. O timer deve estar fixo no canto superior direito</p>
+            <p>2. Faça scroll para baixo - o timer deve continuar fixo</p>
+            <p>3. Redimensione a janela - o timer deve continuar fixo</p>
+        </div>
+        
+        <div class="test-box">
+            <h2>Conteúdo de teste</h2>
+            <p>Este é um conteúdo de teste para verificar se o timer fica fixo durante o scroll.</p>
+        </div>
+        
+        <div class="test-box">
+            <h2>Mais conteúdo</h2>
+            <p>Continue fazendo scroll para testar o posicionamento fixo.</p>
+        </div>
+        
+        <div class="test-box">
+            <h2>Final do teste</h2>
+            <p>Se o timer está fixo no canto superior direito, o CSS está funcionando corretamente.</p>
+        </div>
+    </div>
+    
+    <!-- Timer Section de teste -->
+    <div class="timer-section">
+        <h3>⏰ Próximo Boss</h3>
+        <div class="countdown-timer">--:--:--</div>
+        <p style="text-align: center; font-size: 0.8em; color: #90ee90;">
+            Timer fixo no canto superior direito
+        </p>
+    </div>
+</body>
+</html>

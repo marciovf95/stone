@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste Timer Simples</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #121212;
+            color: white;
+            height: 200vh;
+        }
+        
+        .test-timer {
+            position: fixed !important;
+            top: 20px !important;
+            right: 20px !important;
+            width: 200px !important;
+            background: rgba(30, 30, 30, 0.95) !important;
+            border: 2px solid #4CAF50 !important;
+            border-radius: 8px !important;
+            padding: 15px !important;
+            z-index: 9999 !important;
+            color: white !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste Timer Simples</h1>
+    <p>Este é um teste simples para verificar se o timer fica fixo no canto superior direito.</p>
+    <p>Faça scroll para baixo e veja se o timer continua fixo.</p>
+    
+    <div style="height: 100vh; background: #333; margin: 20px 0; padding: 20px;">
+        <h2>Conteúdo de teste</h2>
+        <p>Continue fazendo scroll...</p>
+    </div>
+    
+    <div style="height: 100vh; background: #444; margin: 20px 0; padding: 20px;">
+        <h2>Mais conteúdo</h2>
+        <p>O timer deve estar fixo no canto superior direito.</p>
+    </div>
+    
+    <!-- Timer de teste -->
+    <div class="test-timer">
+        <h3>⏰ Timer Fixo</h3>
+        <p>Este timer deve estar fixo no canto superior direito!</p>
+        <p>Se você está vendo isso, o posicionamento está funcionando.</p>
+    </div>
+    
+    <script>
+        // Força o posicionamento via JavaScript também
+        document.addEventListener('DOMContentLoaded', function() {
+            const timer = document.querySelector('.test-timer');
+            if (timer) {
+                timer.style.position = 'fixed';
+                timer.style.top = '20px';
+                timer.style.right = '20px';
+                timer.style.zIndex = '9999';
+                console.log('✅ Timer posicionado via JavaScript!');
+            }
+        });
+    </script>
+</body>
+</html>
