@@ -69,10 +69,9 @@
             <div class="adsense-container sidebar-ad">
                 <div class="ad-placeholder">
                     <!-- Aqui vai seu código do AdSense -->
-                    <div style="background: var(--bg-tertiary); border: 2px dashed var(--border-color); padding: 10px; text-align: center; color: var(--text-secondary);">
+                    <div class="ad-placeholder-sidebar">
                         <p>📢 AdSense 1</p>
-                        <p style="font-size: 0.8em;">Espaço para anúncio lateral</p>
-                        <p style="font-size: 0.7em;">160x600 ou 300x250</p>
+                        <p>160x600</p>
                     </div>
                 </div>
             </div>
@@ -81,22 +80,9 @@
             <div class="adsense-container sidebar-ad">
                 <div class="ad-placeholder">
                     <!-- Aqui vai seu código do AdSense -->
-                    <div style="background: var(--bg-tertiary); border: 2px dashed var(--border-color); padding: 10px; text-align: center; color: var(--text-secondary);">
+                    <div class="ad-placeholder-sidebar">
                         <p>📢 AdSense 2</p>
-                        <p style="font-size: 0.8em;">Espaço para anúncio lateral</p>
-                        <p style="font-size: 0.7em;">160x600 ou 300x250</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Anúncio 3 -->
-            <div class="adsense-container sidebar-ad">
-                <div class="ad-placeholder">
-                    <!-- Aqui vai seu código do AdSense -->
-                    <div style="background: var(--bg-tertiary); border: 2px dashed var(--border-color); padding: 10px; text-align: center; color: var(--text-secondary);">
-                        <p>📢 AdSense 3</p>
-                        <p style="font-size: 0.8em;">Espaço para anúncio lateral</p>
-                        <p style="font-size: 0.7em;">160x600 ou 300x250</p>
+                        <p>300x250</p>
                     </div>
                 </div>
             </div>
@@ -130,7 +116,7 @@
                     <button class="nav-tab" data-tab="relics" onclick="switchTab('relics')">💎 Relíquia</button>
                     <button class="nav-tab" data-tab="sort" onclick="switchTab('sort')">🍀 Sorteio</button>
                     <!-- <button class="nav-tab" onclick="switchTab('agecalc')">📈 Age Calc</button>  -->
-                    <button class="nav-tab" data-tab="attwill" onclick="switchTab('attwill')">Atualizações Futuras</button>
+                    <button class="nav-tab" data-tab="attwill" onclick="switchTab('attwill')">🔮 Futuro</button>
                 </div>
             </div>
 
@@ -284,26 +270,28 @@
                     </div>
                     
                     <div class="event-info">
-                        <div class="relics-images" style="display: flex; justify-content: center;  align-items: center;">
-                            <img src="img/reliquia/remix.jpg" alt="Reliquias" >
+                        <div class="relics-images">
+                            <img src="img/reliquia/remix.jpg" alt="Relíquia Remix" >
                         </div>
-                            <h3 style="display: flex; justify-content: center;  align-items: center;">🔄 Versão de como é dentro do Jogo</h3> 
-                         <div class="event-answers" style="display: flex; justify-content: center;  align-items: center;">  <img src="img/reliquia/original.jpg" alt="Reliquias" ></div>
+                        <h3 style="text-align: center; color: var(--text-accent);">🔄 Versão de como é dentro do Jogo</h3> 
+                        <div class="event-answers">
+                            <img src="img/reliquia/original.jpg" alt="Relíquia Original" >
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Road Map Tab Content -->
             <div id="attwill-content" class="tab-content">
-                <div class="sort-card" style="border: 2px dashed #4CAF50; background-color: #1a2a1a;">
+                <div class="sort-card future-updates-card">
                     <div style="text-align: center; padding: 20px; color: #4CAF50;">
                         <h3>🚀 Em Desenvolvimento</h3>
                         <p style="color: #90ee90; margin-bottom: 15px;">Próximas funcionalidades que serão implementadas:</p>
                         <div style="text-align: left; max-width: 500px; margin: 0 auto;">
-                            <div style="background-color: #2a2a2a; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 3px solid #FFD700;">
+                            <div class="future-item">
                                 📤 <strong>Compartilhamento:</strong> Compartilhe horários específicos com amigos
                             </div>
-                            <div style="background-color: #2a2a2a; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 3px solid #FFD700;">
+                            <div class="future-item">
                                 📤 <strong>Age Calc:</strong> é uma calculadora de "aging" que permite aos jogadores prever o resultado de aumentar os atributos de um item ("Aging") ou calcular os atributos originais de um item com "aging" para verificar se é "perfeito". Essas ferramentas são úteis para simular os efeitos do processo de "Aging" em armas e armaduras, levando em conta os diferentes status como defesa, ataque, crítico, e bloqueio, com a possibilidade de incluir a função "Despertado".  
                             </div>
                         </div>
@@ -377,7 +365,7 @@
             <div class="adsense-container bottom-ad">
                 <div class="ad-placeholder">
                     <!-- Aqui vai seu código do AdSense -->
-                    <div style="background: var(--bg-tertiary); border: 2px dashed var(--border-color); padding: 20px; text-align: center; color: var(--text-secondary); margin: 20px 0;">
+                    <div class="ad-placeholder-banner">
                         <p>📢 AdSense Banner</p>
                         <p style="font-size: 0.8em;">Espaço para anúncio horizontal</p>
                         <p style="font-size: 0.7em;">728x90 ou 320x50 (mobile)</p>
@@ -394,13 +382,24 @@
     <!-- Sidebar Direita - AdSense -->
     <aside class="right-sidebar">
         <div class="sidebar-content">
+            <!-- Anúncio 3 -->
             <div class="adsense-container sidebar-ad">
                 <div class="ad-placeholder">
                     <!-- Aqui vai seu código do AdSense -->
-                    <div style="background: var(--bg-tertiary); border: 2px dashed var(--border-color); padding: 20px; text-align: center; color: var(--text-secondary);">
-                        <p>📢 AdSense</p>
-                        <p style="font-size: 0.8em;">Espaço para anúncio lateral</p>
-                        <p style="font-size: 0.7em;">160x600 ou 300x250</p>
+                    <div class="ad-placeholder-sidebar">
+                        <p>📢 AdSense 3</p>
+                        <p>300x250</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Anúncio 4 -->
+            <div class="adsense-container sidebar-ad">
+                <div class="ad-placeholder">
+                    <!-- Aqui vai seu código do AdSense -->
+                    <div class="ad-placeholder-sidebar">
+                        <p>📢 AdSense 4</p>
+                        <p>160x600</p>
                     </div>
                 </div>
             </div>
@@ -535,5 +534,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-</script></body>
+</script>
+
+</body>
 </html>
